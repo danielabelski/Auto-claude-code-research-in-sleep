@@ -43,15 +43,16 @@ See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model comb
 
 ## ✨ Features
 
+- 📊 **17 composable skills** — mix and match, or chain into full pipelines (`/idea-discovery`, `/auto-review-loop`, `/paper-writing`, `/research-pipeline`)
 - 🔄 **Auto review loop** — 4-round autonomous review, 5/10 → 7.5/10 overnight with 20+ GPU experiments
 - 💡 **Idea discovery** — literature survey → brainstorm 8-12 ideas → novelty check → GPU pilot experiments → ranked report
+- 📝 **Paper writing** — narrative → outline → figures → LaTeX → PDF → auto-review (4/10 → 8.5/10), one command
 - 🔍 **Literature & novelty** — multi-source paper search (arXiv, Scholar, Semantic Scholar) + local paper library scan + cross-model novelty verification
 - 🤖 **Cross-model collaboration** — Claude Code executes, GPT-5.4 xhigh reviews. Adversarial, not self-play
 - 📝 **Peer review** — review others' papers as a conference reviewer, with structured scoring and meta-review
 - 🖥️ **GPU deployment** — auto rsync, screen sessions, multi-GPU parallel experiments, live monitoring
 - 🔀 **Flexible models** — default Claude × GPT-5.4, also supports [GLM + GPT, GLM + MiniMax](#-alternative-model-combinations) — no Claude API required
 - 🛑 **Human-in-the-loop** — configurable checkpoints at key decisions. `AUTO_PROCEED=true` for full autopilot, `false` to approve each step
-- 📊 **17 composable skills** — mix and match, or chain into full pipelines (`/idea-discovery`, `/auto-review-loop`, `/research-pipeline`)
 
 ---
 
