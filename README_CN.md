@@ -24,6 +24,7 @@
 
 ## 📢 最近更新
 
+- **2026-03-16** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔬 **[`research-refine`](skills/research-refine/SKILL.md)** + [`experiment-plan`](skills/experiment-plan/SKILL.md) — 模糊 idea → 问题锚点明确的方案 + claim-driven 实验路线图。已集成到工作流 1（`/idea-discovery`）。社区贡献 by [@zjYao36](https://github.com/zjYao36)
 - **2026-03-16** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🇨🇳 **[阿里百炼 Coding Plan 接入指南](docs/ALI_CODING_PLAN_GUIDE.md)** — 一个 API Key、4 款模型（Kimi-K2.5 + Qwen3.5+ + GLM-5 + MiniMax-M2.5），双端点配置。社区贡献 by [@tianhao909](https://github.com/tianhao909)
 - **2026-03-15** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔀 **自带模型！** [任意 OpenAI 兼容 API](#-替代模型组合) 均可作为审查器，通过 [`llm-chat`](mcp-servers/llm-chat/) MCP 服务器。GLM、MiniMax、Kimi、LongCat、DeepSeek 已全部测试——**完全不需要 Claude 或 OpenAI API**
 - **2026-03-15** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🐾 **[OpenClaw 适配指南](docs/OPENCLAW_ADAPTATION.md)** — 无需 Claude Code slash skills，在 [OpenClaw](https://github.com/All-Hands-AI/OpenHands) 中使用 ARIS 科研工作流
@@ -160,9 +161,9 @@ claude
 ### 完整流程 🚀
 
 ```
-/research-lit → /idea-creator → /novelty-check → 实现 → /run-experiment → /auto-review-loop → /paper-plan → /paper-figure → /paper-write → /auto-paper-improvement-loop → 投稿
-  (调研文献)      (找idea)       (查新验证)     (写代码)   (部署跑实验)     (自动改到能投)      (大纲)        (作图)        (LaTeX+PDF)     (审稿×2 + 格式检查)     (搞定!)
-  ├──── 工作流 1：找 Idea ────┤                 ├──── 工作流 2：自动循环 ────┤   ├───────────────── 工作流 3：论文写作 ─────────────────────┤
+/research-lit → /idea-creator → /novelty-check → /research-refine → /run-experiment → /auto-review-loop → /paper-plan → /paper-figure → /paper-write → /auto-paper-improvement-loop → 投稿
+  (调研文献)      (找idea)       (查新验证)      (打磨方案)      (部署跑实验)     (自动改到能投)      (大纲)        (作图)        (LaTeX+PDF)     (审稿×2 + 格式检查)     (搞定!)
+  ├────────────── 工作流 1：找 Idea + 方案精炼 ──────────────┤  ├── 工作流 2 ──┤   ├───────────────── 工作流 3：论文写作 ─────────────────────┤
 ```
 
 📝 **博客：** [梦中科研全流程开源](http://xhslink.com/o/2iV33fYoc7Q)
@@ -182,7 +183,7 @@ claude
 
 输出 `IDEA_REPORT.md`：含假设、pilot 结果、审稿人可能的质疑、建议执行顺序。失败的 idea 也记录在案，避免重复踩坑。
 
-**涉及 Skills：** `research-lit` + `idea-creator` + `novelty-check` + `research-review`
+**涉及 Skills：** `research-lit` + `idea-creator` + `novelty-check` + `research-review` + `research-refine-pipeline`
 
 > 💡 **一键调用：** `/idea-discovery "你的研究方向"` 自动跑完整个工作流 1。
 
@@ -349,7 +350,7 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 | 🔍 [`novelty-check`](skills/novelty-check/SKILL.md) | 查新：验证研究 idea 是否已有人做过 | 是 |
 | 🚀 [`run-experiment`](skills/run-experiment/SKILL.md) | 部署实验到本地（MPS/CUDA）或远程 GPU 服务器 | 否 |
 | 🎨 [`pixel-art`](skills/pixel-art/SKILL.md) | 生成像素风 SVG 插图，用于 README、文档或幻灯片 | 否 |
-| 🔭 [`idea-discovery`](skills/idea-discovery/SKILL.md) | **工作流 1 全流程**：research-lit → idea-creator → novelty-check → research-review | 是 |
+| 🔭 [`idea-discovery`](skills/idea-discovery/SKILL.md) | **工作流 1 全流程**：research-lit → idea-creator → novelty-check → research-review → research-refine | 是 |
 | 🔬 [`research-refine`](skills/research-refine/SKILL.md) | 把模糊方法想法精炼成问题锚点明确、可实现的研究方案 | 是 |
 | 🧪 [`experiment-plan`](skills/experiment-plan/SKILL.md) | 把 refined proposal 转成 claim-driven 实验路线图，含执行顺序和预算 | 否 |
 | 🧭 [`research-refine-pipeline`](skills/research-refine-pipeline/SKILL.md) | 一条龙完成方法精炼 + 实验规划：`research-refine` → `experiment-plan` | 是 |
