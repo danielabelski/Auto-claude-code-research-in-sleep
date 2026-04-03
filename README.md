@@ -4,15 +4,17 @@
 
 🔥 [**ARIS-Code CLI — 独立安装版**](docs/ARIS-Code-README_CN.md) · [English](docs/ARIS-Code-README_EN.md) | [⬇️ Download](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/releases/latest)
 
-> 📰 **ARIS-Code v0.2.2** (2026-04-03) — `/plan` step-by-step research planning | `/tasks` persistent task tracking
+> 📰 **ARIS-Code v0.3.0** (2026-04-03) — Multi-file memory index (selective recall) | Rich task system (TodoWrite) | `/plan` research planning | Security hardening
 >
 > <details><summary>Previous versions</summary>
 >
-> **v0.2.1** (2026-04-03) — Persistent Memory (cross-session context) | Kimi K2.5 multi-turn fix | CJK cursor fix | Banner box frame
+> **v0.2.2** (2026-04-03) — `/plan` step-by-step planning | `/tasks` persistent tracking
 >
-> **v0.2.0** (2026-04-02) — Open source release | Kimi K2.5 + MiniMax M2.7 + GLM-5 support | Smart LlmReview routing | CI/CD for macOS + Linux
+> **v0.2.1** (2026-04-03) — Persistent Memory | Kimi K2.5 multi-turn fix | CJK cursor fix
 >
-> **v0.1.0** (2026-04-02) — Initial release | Multi-executor & multi-reviewer | 42 bundled skills | Interactive setup & menus
+> **v0.2.0** (2026-04-02) — Open source | Kimi + MiniMax + GLM support | Smart LlmReview routing | CI/CD
+>
+> **v0.1.0** (2026-04-02) — Initial release | Multi-executor & reviewer | 42 bundled skills
 >
 > </details>
 
