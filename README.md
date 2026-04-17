@@ -125,6 +125,7 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 
 ## 📢 What's New
 
+- **2026-04-17** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔗 **[Project-local symlink install](tools/install_aris.sh)** (resolves [#118](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/118)) — new recommended default install. `bash tools/install_aris.sh` auto-detects platform (Claude Code / Codex CLI), creates `.claude/skills/aris` or `.agents/skills/aris` symlink to the ARIS repo, adds a managed `<!-- ARIS:BEGIN -->` block to `CLAUDE.md` / `AGENTS.md` telling the agent to use only project-local skills, and records install metadata in `.aris/skill-source.txt`. **Solves the skill collision problem** when ARIS is mixed with Superpowers / OpenHands / other community packs in the same global skill directory. PowerShell version (`install_aris.ps1`) ships with junction support for Windows. **`smart_update.sh --target-subdir`** flag added for `.agents/skills/aris` (Codex) project-copy installs; symlinked installs now correctly refuse `smart_update` and direct users to `git pull`. Global install remains supported for power users
 - **2026-04-16** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🎨 **[`/figure-spec`](skills/figure-spec/SKILL.md)** — deterministic JSON→SVG renderer packaged as a first-class skill. Preferred default for architecture/workflow/pipeline/audit-cascade figures in papers. Shape-aware edge clipping (rect/circle/ellipse/diamond), self-loops, curved edges, multi-line labels with CJK width estimation. Editable vector output, reproducible (same spec → same SVG), no external API. **Phase 2b in Workflow 3 restored**: `illustration: figurespec` (new default) / `gemini` / `mermaid` / `false` — 4-way illustration selector with complementary strengths
 - **2026-04-16** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) ⚙️ **[`/experiment-queue`](skills/experiment-queue/SKILL.md)** — SSH job queue for multi-seed/multi-config ML experiments. Designed from real 36-cell NeurIPS sweep pain points: OOM-aware retry with backoff, stale-screen cleanup, wave-transition race prevention, teacher→student phase dependencies, crash-safe scheduler that resumes from JSON state. Declarative grid specs expand automatically (e.g., `N × seed × n_train → 36 jobs`). Configurable `conda_hook` + `gpu_free_threshold_mib` for non-standard environments. Use for ≥10 jobs; `/run-experiment` stays for ad-hoc
 - **2026-04-15** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🛡️ **Paper Writing Pipeline Hardening** — 10 empirically-motivated patches from a real NeurIPS run. `REVIEWER_BIAS_GUARD=true`: every review round uses a fresh thread (codex-reply inflated 3→8/10). Reviewer Independence Protocol: no fix summaries to reviewer. Step 4.5 Restatement Regression Test: catches theorem drift across fix rounds. Step 5.5 Kill Argument Exercise: final-round adversarial attack/defense for theory papers. Location-aware overfull blocking. Theory Paper Consistency Pass in `/paper-write`. Enforced Bib Hygiene with DBLP/CrossRef validation. Phase 5.5 Mandatory Final Claim Audit as submission gate. **Review Tracing Protocol**: full prompt/response pairs saved to `.aris/traces/` for reviewer-independence audit ([`review-tracing.md`](skills/shared-references/review-tracing.md), [`save_trace.sh`](tools/save_trace.sh)). Inspired by community contribution from @李傲龍
@@ -1137,22 +1138,52 @@ export OPENAI_API_KEY="your-key"
 
 ### Install Skills
 
-> 💡 **New Claude Code versions** may not auto-create `~/.claude/skills/`. If the directory doesn't exist, create it first: `mkdir -p ~/.claude/skills/`. This works alongside the new plugins system — both `skills/` and `plugins/` are loaded by Claude Code.
+> 💡 **Recommended: project-local symlink install** (since v0.4.2). Project isolation prevents ARIS workflows from being interrupted by other community skill packs (Superpowers, etc.). Issue [#118](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/118).
 
 ```bash
-git clone https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git
-cd Auto-claude-code-research-in-sleep
+# 1. Clone ARIS once to a stable location
+git clone https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git ~/aris_repo
 
-# Create skills directory if it doesn't exist
-mkdir -p ~/.claude/skills/
+# 2. For each project that uses ARIS, attach via symlink:
+cd ~/your-paper-project
+bash ~/aris_repo/tools/install_aris.sh
+# → auto-detects platform (Claude Code / Codex CLI) from CLAUDE.md or AGENTS.md
+# → creates .claude/skills/aris symlink (or .agents/skills/aris for Codex)
+# → adds a managed block to CLAUDE.md / AGENTS.md telling the agent to use only project-local skills
+# → records install metadata in .aris/skill-source.txt
 
-# Install all skills globally
-cp -r skills/* ~/.claude/skills/
+# 3. To update ARIS for ALL attached projects, just pull the repo once:
+cd ~/aris_repo && git pull
 
-# Or install specific skills
-cp -r skills/auto-review-loop ~/.claude/skills/
-cp -r skills/research-lit ~/.claude/skills/
+# Windows (PowerShell, requires admin or developer mode for junctions):
+.\tools\install_aris.ps1 C:\path\to\your-paper-project
 ```
+
+<details>
+<summary><b>Alternative installs (advanced)</b></summary>
+
+**Project-local copy (for per-project customization):**
+```bash
+# Copy skills into the project (instead of symlink)
+mkdir -p ~/your-project/.claude/skills
+bash ~/aris_repo/tools/smart_update.sh \
+    --project ~/your-project \
+    --target-subdir .claude/skills/aris \
+    --apply
+# Update with: smart_update.sh --project ~/your-project --target-subdir .claude/skills/aris --apply
+```
+
+**Global install (for power users who want ARIS available in every project):**
+```bash
+cp -r ~/aris_repo/skills/* ~/.claude/skills/
+# Update with: bash tools/smart_update.sh --apply
+```
+
+> Global install increases the risk of skill name collisions with other globally-installed packs. Use only if you understand the trade-offs and don't mix ARIS with Superpowers / OpenHands / etc.
+
+</details>
+
+> 💡 **New Claude Code versions** may not auto-create `~/.claude/skills/`. If using global install, create it first: `mkdir -p ~/.claude/skills/`. The symlink installer handles directory creation automatically.
 
 <details>
 <summary><b>Optional: Codex Plugin for Code Review</b></summary>
