@@ -82,8 +82,8 @@ ARIS 读论文 → 找弱点 → 克隆代码 → 针对*那些*弱点用*那套
 
 | 论文 | AI 审稿信号 | 投稿状态 | 作者 | 技术栈 |
 |------|:------------:|----------|------|--------|
-| CS 论文 | 模拟 CS 论文审稿：**8/10**；AI 审稿建议："clear accept" | 已投 CS 会议，等待正式审稿反馈 | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Claude Code + GPT-5.4 |
-| AAAI 2026 论文 | AAAI-style AI 审稿：**7/10**；AI 审稿建议："good paper, accept" | 已投 AAAI 2026 Main Technical，等待官方结果 | [@xinbo820-web](https://github.com/xinbo820-web) | 纯 Codex CLI |
+| **CS 论文投稿** | 模拟 CS 论文审稿：**8/10**；AI 审稿建议："clear accept" | 已投 CS 会议，等待正式审稿反馈 | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Claude Code + GPT-5.4 |
+| **AAAI 2026 论文投稿** | AAAI-style AI 审稿：**7/10**；AI 审稿建议："good paper, accept" | 已投 AAAI 2026 Main Technical，等待官方结果 | [@xinbo820-web](https://github.com/xinbo820-web) | 纯 Codex CLI |
 | UAV-CC | 审稿中 | 已投 IEEE TGRS | [@wxx827](https://github.com/wxx827) | Claude Opus 4.6 + Codex 5.4 xhigh + Cursor |
 
 > 全程 ARIS 完成——从 idea 到 submission。表中 AI 审稿分数来自社区反馈的模拟/第三方审稿工具，不代表会议或期刊官方审稿/录用结果。[详情 + 审稿截图 →](#-社区实操--用-aris-完成的论文)
@@ -323,8 +323,8 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 
 | 论文 | AI 审稿信号 | 投稿状态 | 作者 | 备注 |
 |------|:------------:|----------|------|------|
-| CS 论文 | **8/10** — AI 审稿建议："Top 50% of accepted papers, clear accept" | 已投 CS 会议，等待正式审稿反馈 | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | ARIS 全流程：idea → 实验 → auto-review → 论文写作。该评价来自模拟/第三方 CS 论文审稿工具，不是会议官方审稿意见。 |
-| AAAI 2026 论文 | **7/10** — AI 审稿建议："Good paper, accept" | 已投 AAAI 2026 Main Technical，等待官方结果 | [@xinbo820-web](https://github.com/xinbo820-web) | 纯 **Codex CLI**（ARIS-Codex skills）。7/10 来自 AAAI-style AI 审稿模拟，不代表 AAAI 官方审稿/录用结果。 |
+| **CS 论文投稿** | **8/10** — AI 审稿建议："Top 50% of accepted papers, clear accept" | 已投 CS 会议，等待正式审稿反馈 | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | ARIS 全流程：idea → 实验 → auto-review → 论文写作。该评价来自模拟/第三方 CS 论文审稿工具，不是会议官方审稿意见。 |
+| **AAAI 2026 论文投稿** | **7/10** — AI 审稿建议："Good paper, accept" | 已投 AAAI 2026 Main Technical，等待官方结果 | [@xinbo820-web](https://github.com/xinbo820-web) | 纯 **Codex CLI**（ARIS-Codex skills）。7/10 来自 AAAI-style AI 审稿模拟，不代表 AAAI 官方审稿/录用结果。 |
 | [UAV-CC](community_papers/UAV-CC.pdf) | 审稿中 | 已投 IEEE TGRS | [@wxx827](https://github.com/wxx827) | 无人机变化描述基准。Claude Opus 4.6（执行）+ Codex GPT-5.4 xhigh（审阅）+ Cursor Opus 4.6（辅助）。[PDF →](community_papers/UAV-CC.pdf) |
 
 <details><summary>审稿截图</summary>

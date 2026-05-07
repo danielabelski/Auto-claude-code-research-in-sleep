@@ -119,8 +119,8 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 
 | Paper | AI-review signal | Status | Author | Stack |
 |-------|:----------------:|--------|--------|-------|
-| CS Paper | Simulated CS-paper review: **8/10**; AI reviewer recommendation: "clear accept" | Submitted to a CS conference; awaiting official feedback | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Claude Code + GPT-5.4 |
-| AAAI 2026 Paper | AAAI-style AI review: **7/10**; AI reviewer recommendation: "good paper, accept" | Submitted to AAAI 2026 Main Technical; awaiting official decision | [@xinbo820-web](https://github.com/xinbo820-web) | Pure Codex CLI |
+| **CS Paper Submission** | Simulated CS-paper review: **8/10**; AI reviewer recommendation: "clear accept" | Submitted to a CS conference; awaiting official feedback | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Claude Code + GPT-5.4 |
+| **AAAI 2026 Paper Submission** | AAAI-style AI review: **7/10**; AI reviewer recommendation: "good paper, accept" | Submitted to AAAI 2026 Main Technical; awaiting official decision | [@xinbo820-web](https://github.com/xinbo820-web) | Pure Codex CLI |
 | UAV-CC | Under review | Submitted to IEEE TGRS | [@wxx827](https://github.com/wxx827) | Claude Opus 4.6 + Codex 5.4 xhigh + Cursor |
 
 > Built with ARIS — from idea to submission. AI-review scores are community-reported signals from simulated/third-party review tools, not official peer-review or acceptance results. [Full details + review screenshots →](#-community-showcase--papers-built-with-aris)
@@ -389,8 +389,8 @@ Real projects where the ARIS pipeline was used end-to-end to produce submitted m
 
 | Paper | AI-review signal | Submission status | Built by | Notes |
 |-------|:----------------:|-------------------|----------|-------|
-| CS Paper | **8/10** — AI reviewer recommendation: "Top 50% of accepted papers, clear accept" | Submitted to a CS conference; awaiting official feedback | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Full ARIS pipeline: idea → experiments → auto-review → paper writing. The quote is from a simulated/third-party CS-paper review tool, not an official venue review. |
-| AAAI 2026 Paper | **7/10** — AI reviewer recommendation: "Good paper, accept" | Submitted to AAAI 2026 Main Technical; awaiting official decision | [@xinbo820-web](https://github.com/xinbo820-web) | Pure **Codex CLI** (ARIS-Codex skills). The 7/10 signal comes from an AAAI-style AI review simulation, not an official AAAI acceptance result. |
+| **CS Paper Submission** | **8/10** — AI reviewer recommendation: "Top 50% of accepted papers, clear accept" | Submitted to a CS conference; awaiting official feedback | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Full ARIS pipeline: idea → experiments → auto-review → paper writing. The quote is from a simulated/third-party CS-paper review tool, not an official venue review. |
+| **AAAI 2026 Paper Submission** | **7/10** — AI reviewer recommendation: "Good paper, accept" | Submitted to AAAI 2026 Main Technical; awaiting official decision | [@xinbo820-web](https://github.com/xinbo820-web) | Pure **Codex CLI** (ARIS-Codex skills). The 7/10 signal comes from an AAAI-style AI review simulation, not an official AAAI acceptance result. |
 | [UAV-CC](community_papers/UAV-CC.pdf) | Under review | Submitted to IEEE TGRS | [@wxx827](https://github.com/wxx827) | UAV change captioning benchmark. Claude Opus 4.6 (executor) + Codex GPT-5.4 xhigh (reviewer) + Cursor Opus 4.6 (assist). [PDF →](community_papers/UAV-CC.pdf) |
 
 <details><summary>Reviewer screenshots</summary>
