@@ -90,6 +90,7 @@ ARIS 读论文 → 找弱点 → 克隆代码 → 针对*那些*弱点用*那套
 
 ## 📢 最近更新
 
+- **2026-05-14** — ![BREAKING](https://img.shields.io/badge/BREAKING-purple?style=flat-square) ⚙️ **默认 reviewer 模型：`gpt-5.4` → `gpt-5.5`**，覆盖所有 `REVIEWER_MODEL` 常量（~30 个 SKILL.md + shared-references schema 示例 + README 默认值）。Codex MCP 自 2026-04-24 起 runtime 默认就是 `gpt-5.5`，本次让文档对齐 runtime。**⚠️ 你应该知道的行为变化**：(a) 之前 run 留下的 `.aris/traces/*` JSON **不可复现**——重跑用 5.5，边界 case 可能给出不同的 `WARN/FAIL` 判决（reviewer 质量提升，不是回归）。(b) ChatGPT Plus/Pro 月度配额在重度使用（`/auto-paper-improvement-loop`、批量审计）下消耗更快。**回退**：单次调用传 `— reviewer-model: gpt-5.4`，或在 skill 文件里固定 `REVIEWER_MODEL = gpt-5.4`。Oracle Pro tier（`gpt-5.4-pro` / `gpt-5.5-pro`，通过 `— reviewer: oracle-pro` 走独立路由）不受影响。历史 News 里写 "gpt-5.4 via Codex MCP" 的条目作为历史事实保留。
 - **2026-05-13** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔍 **[`tools/verify_papers.py`](tools/verify_papers.py) + Pre-Search Verification Protocol —— 给文献类 skill 加反幻觉过滤**。新 helper 走 3 层 fallback 验证（arXiv batch API 每次最多 40 个 ID → CrossRef DOI 查询 → Semantic Scholar 模糊标题匹配，默认 0.6 词重叠阈值），每篇 paper 输出 4 态（`verified` / `unverified` / `verify_pending` / `error`），顶层 verdict 对齐 `assurance-contract.md`（`PASS` / `WARN` / `BLOCKED` / `ERROR`）。**关键设计点**：网络瞬时失败（5xx、超时、429）单独标 `verify_pending` 且**不计入幻觉率**，避免网络挂被当成伪造引用。per-project 缓存路径 `<project>/.aris/cache/verify_papers.json`，30 天 TTL；缓存键优先级 `arxiv:{id_去版本号}` → `doi:{小写}` → `title:{sha1[:16]}`。[`shared-references/citation-discipline.md`](skills/shared-references/citation-discipline.md) 新增 `Pre-Search Verification Protocol` 小节，明确 search-time vs write-time 分工：本协议是 SEARCH（Step 1）和完整 VERIFY（Step 2）之间的**快速过滤器**；`/citation-audit` 和 `/paper-claim-audit` 仍是 submission 时的硬性 audit gate，**没被替代**。[`/research-lit`](skills/research-lit/SKILL.md) 新增 mandatory `Step 1.5: Verify Candidate Papers` 调 helper；[`/idea-creator`](skills/idea-creator/SKILL.md) 和 [`/novelty-check`](skills/novelty-check/SKILL.md) 各加 1 行 Key Rule 引用，覆盖 landscape 引用和 Closest Prior Work 表格。**保留而非静默删除**：未验证 paper 留在输出里打 `[UNVERIFIED]` 标记，让搜索质量问题对用户可见。可选：shell 里 `export ARIS_VERIFY_EMAIL=you@institution.edu` 进 CrossRef polite-pool 提高速率。最初由 [@YiwenZhu77](https://github.com/YiwenZhu77) 在 [#120](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/pull/120) 提出——做了干净重写而非直接合 PR（PR 5 周老 + scope creep 到 figure-style）。
 - **2026-05-06** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🎤 **[`/paper-talk`](skills/paper-talk/SKILL.md) workflow + [`/slides-polish`](skills/slides-polish/SKILL.md) skill —— 端到端 conference talk pipeline**。`/paper-talk` 编排 paper → slide outline → Beamer + PPTX → per-page polish → assurance 审计 → final report（`/paper-writing`、`/paper-poster` 的姊妹 workflow）；组合 `/paper-slides`、`/slides-polish`，`assurance: conference-ready` 时再叠 `/paper-claim-audit` + `/citation-audit`。`/slides-polish` 是 post-generation 视觉打磨阶段：per-page Codex 对照 reference PDF 一页一页审 + 一套针对性 python-pptx / Beamer fix pattern（PPTX 字号 1.5-1.8× 缩放保证投影可读、字号 bump 后 text frame resize、banner 真用 tcolorbox 而不是 centered text、italic style 泄漏防御、em-dash 间距、中文 EA font hint 走 PingFang SC、anonymity placeholder 纪律）。Assurance 阶梯 `draft / polished（默认）/ conference-ready` 与 effort 轴正交——`effort: lite, assurance: conference-ready` 合法，意为「快流水线 + 每个审计必出 verdict 才能 final」。Phase 4 staging adapter 把 slide 文字 + 讲稿 + 完整 script 物化成合成 paper 目录（`.aris/paper-talk/audit-input/sections/*.tex` + symlink 真实 `.bib` / `results/` / `figures/`），让现有 `/paper-claim-audit` 和 `/citation-audit` 用它们 paper-shaped 合约审 talk 内容，输出 6 态 JSON verdict（见 `shared-references/assurance-contract.md`）。
 - **2026-05-05** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔁 **`/resubmit-pipeline` —— Workflow 5：跨 venue 文本-only 重投流程** ([#208](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/pull/208))。把已经打磨好的 paper 从一个 venue 移到另一个，硬约束：不跑新实验、不改 bib、不动 framework、不覆盖任何先前 submission 目录。5 阶段：物理隔离 → 5 层匿名检查 → 三审（proof / claim / citation `--soft-only`）→ `/auto-paper-improvement-loop --edit-whitelist` 微编辑 + 每轮 diff gate → `/kill-argument` 对抗 gate → 终编译 + `/overleaf-sync` 推送。同 PR 一起落地两个前置 skill 升级：**`/auto-paper-improvement-loop --edit-whitelist <path>`**（YAML schema，含 `allowed_paths` / `forbidden_paths` / `forbidden_operations`（如 `new_cite` / `new_theorem_env` / `numerical_claim`）/ `forbidden_deletions` / `requires_user_approval_for` / `max_edits_per_round`）和 **`/citation-audit --soft-only`**（bib 冻结时把 KEEP/FIX/REPLACE/REMOVE 翻译成文本改写建议；hallucinated 引用走 `drop_cite_in_body_only` 动作）。Master `RESUBMIT_REPORT.json` ledger 兼容 `shared-references/assurance-contract.md`；7 态 verdict 表（含 `USER_DECISION` runtime 状态）。
@@ -175,7 +176,7 @@ bash Auto-claude-code-research-in-sleep/tools/smart_update_codex.sh --local ~/.c
 
 # 2. 配置 Codex MCP（review 类 skill 需要）
 npm install -g @openai/codex
-codex setup                    # 提示选模型时选 gpt-5.4
+codex setup                    # 提示选模型时选 gpt-5.5
 claude mcp add codex -s user -- codex mcp-server
 
 # 3. 在 Claude Code 中使用
@@ -263,7 +264,7 @@ claude
 > /research-pipeline "你的课题" — AUTO_PROCEED: false, human checkpoint: true  # 组合使用
 > ```
 
-> **重要：** Codex MCP 使用的模型取决于 `~/.codex/config.toml`，而非 skill 文件中的设置。请确认其中写的是 `model = "gpt-5.4"`（推荐）。其他可用模型：`gpt-5.3-codex`、`gpt-5.2-codex`、`o3`。运行 `codex setup` 或直接编辑该文件。
+> **重要：** Codex MCP 使用的模型取决于 `~/.codex/config.toml`，而非 skill 文件中的设置。请确认其中写的是 `model = "gpt-5.5"`（推荐）。其他可用模型：`gpt-5.3-codex`、`gpt-5.2-codex`、`o3`。运行 `codex setup` 或直接编辑该文件。
 
 > **想让 Codex 执行、Claude Code 审稿？** 见 [`docs/CODEX_CLAUDE_REVIEW_GUIDE_CN.md`](docs/CODEX_CLAUDE_REVIEW_GUIDE_CN.md)。这条路径会先安装基础 `skills/skills-codex/*`，再叠加 `skills/skills-codex-claude-review/*`，并通过本地 `claude-review` MCP bridge 转发 review-heavy skill 的审稿请求。
 
@@ -1387,7 +1388,7 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 
 | 常量 | 默认值 | 说明 |
 |------|--------|------|
-| `REVIEWER_MODEL` | `gpt-5.4` | Codex MCP 调用的 OpenAI 模型。其他可选：`gpt-5.3-codex`、`gpt-5.2-codex`、`o3`。完整列表见 [supported models](https://developers.openai.com/codex/models/) |
+| `REVIEWER_MODEL` | `gpt-5.5` | Codex MCP 调用的 OpenAI 模型。其他可选：`gpt-5.3-codex`、`gpt-5.2-codex`、`o3`。完整列表见 [supported models](https://developers.openai.com/codex/models/) |
 
 - **Prompt 模板** — 定制评审人格和评估标准
 - **`allowed-tools`** — 限制或扩展每个 skill 可用的工具
@@ -1422,7 +1423,7 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 ```bash
 npm install -g @anthropic-ai/claude-code
 npm install -g @openai/codex
-codex setup   # 提示选模型时选 gpt-5.4
+codex setup   # 提示选模型时选 gpt-5.5
 ```
 
 配置 `~/.claude/settings.json`：
@@ -1489,7 +1490,7 @@ claude
 <details>
 <summary>展开 6 项更早完成的功能</summary>
 
-- [x] **可配置 REVIEWER_MODEL** — 所有依赖 Codex 的 skill 支持自定义审稿模型（默认 `gpt-5.4`，也支持 `gpt-5.3-codex`、`gpt-5.2-codex`、`o3` 等）
+- [x] **可配置 REVIEWER_MODEL** — 所有依赖 Codex 的 skill 支持自定义审稿模型（默认 `gpt-5.5`，也支持 `gpt-5.3-codex`、`gpt-5.2-codex`、`o3` 等）
 
 - [x] **本地论文库扫描** — `/research-lit` 在外部搜索前先扫描本地 `papers/` 和 `literature/` 目录，复用已读论文
 - [x] **Idea Discovery 流水线** — `/idea-discovery` 一键编排 research-lit → idea-creator → novelty-check → research-review，含 GPU pilot 实验

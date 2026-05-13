@@ -127,6 +127,7 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 
 ## 📢 What's New
 
+- **2026-05-14** — ![BREAKING](https://img.shields.io/badge/BREAKING-purple?style=flat-square) ⚙️ **Default reviewer model: `gpt-5.4` → `gpt-5.5`** across all `REVIEWER_MODEL` constants (~30 SKILL.md + shared-references schema examples + README defaults). Codex MCP has routed `gpt-5.5` as the default since 2026-04-24; this commit catches the docs up to runtime. **⚠️ Behavior changes you should know about**: (a) `.aris/traces/*` JSONs from prior runs are **not reproducible** — re-runs invoke 5.5 and may emit different `WARN/FAIL` verdicts on borderline cases (reviewer-quality lift, not regression). (b) ChatGPT Plus/Pro monthly quotas drain faster under heavy use (`/auto-paper-improvement-loop`, batch audits). **Fallback**: pass `— reviewer-model: gpt-5.4` to individual skill invocations, or pin `REVIEWER_MODEL = gpt-5.4` per skill. Oracle Pro tier (`gpt-5.4-pro` / `gpt-5.5-pro`, routed via `— reviewer: oracle-pro`) is a separate path and unaffected. Historic News entries that named "gpt-5.4 via Codex MCP" preserved as historical fact.
 - **2026-05-13** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔍 **[`tools/verify_papers.py`](tools/verify_papers.py) + Pre-Search Verification Protocol — anti-hallucination filter for literature-facing skills**. New helper does 3-layer fallback verification (arXiv batch API up to 40 IDs/request → CrossRef DOI lookup → Semantic Scholar fuzzy title match, default 0.6 word-overlap) and emits 4-state per-paper status (`verified` / `unverified` / `verify_pending` / `error`) plus a top-level verdict aligning with `assurance-contract.md` (`PASS` / `WARN` / `BLOCKED` / `ERROR`). Transient failures (5xx, timeouts, 429) are tagged `verify_pending` and **excluded from the hallucination rate** so network blips don't get conflated with fabricated references. Per-project cache at `<project>/.aris/cache/verify_papers.json` with 30-day TTL; canonical key priority `arxiv:{id_without_version}` → `doi:{lowercase}` → `title:{sha1[:16]}`. New `Pre-Search Verification Protocol` subsection in [`shared-references/citation-discipline.md`](skills/shared-references/citation-discipline.md) makes the split explicit: this protocol is the **fast filter** between SEARCH (Step 1) and full VERIFY (Step 2); `/citation-audit` and `/paper-claim-audit` remain the submission-time audit gates and are not replaced. [`/research-lit`](skills/research-lit/SKILL.md) gets a mandatory `Step 1.5: Verify Candidate Papers` calling the helper; [`/idea-creator`](skills/idea-creator/SKILL.md) and [`/novelty-check`](skills/novelty-check/SKILL.md) add a Key Rule reference for cited Closest Prior Work / landscape entries. Unverified papers are **retained** in output tagged `[UNVERIFIED]` (retention-over-silent-removal) so search-quality issues stay visible. Set `ARIS_VERIFY_EMAIL` in your shell to lift CrossRef to the polite-pool rate. Original signal from [@YiwenZhu77](https://github.com/YiwenZhu77) in [#120](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/pull/120) — landed via clean reimplementation rather than direct merge (PR was 5 weeks old + scope creep into figure-style).
 - **2026-05-06** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🎤 **[`/paper-talk`](skills/paper-talk/SKILL.md) workflow + [`/slides-polish`](skills/slides-polish/SKILL.md) skill — end-to-end conference talk pipeline**. `/paper-talk` orchestrates paper → slide outline → Beamer + PPTX → per-page polish → assurance audits → final report (sister to `/paper-writing`, `/paper-poster`); composes `/paper-slides`, `/slides-polish`, plus `/paper-claim-audit` + `/citation-audit` when `assurance: conference-ready`. `/slides-polish` is the post-generation visual pass: per-page Codex review against a reference PDF + a fix-pattern catalog (PPTX font scaling 1.5-1.8× for projector-readable size, text-frame resize after font bump, banner-as-tcolorbox, italic style leak guard, em-dash spacing, Chinese EA font hint via PingFang SC, anonymity placeholder discipline). Assurance ladder `draft / polished (default) / conference-ready` is independent from the effort axis; `effort: lite, assurance: conference-ready` is legal and means "fast pipeline, every audit must emit verdict before final". Phase 4 staging adapter materializes slide text + speaker notes + talk script as a synthetic paper directory (`.aris/paper-talk/audit-input/sections/*.tex` + symlinked `.bib` / `results/` / `figures/`) so the existing audits run with their paper-shaped contracts and emit 6-state JSON verdicts per `shared-references/assurance-contract.md`.
 - **2026-05-05** — ![NEW](https://img.shields.io/badge/NEW-red?style=flat-square) 🔁 **`/resubmit-pipeline` — Workflow 5: text-only resubmit across venues** ([#208](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/pull/208)). Port a polished paper from one venue to another under hard constraints (no new experiments, no bib edits, no framework changes, never overwrite prior submissions). 5 phases: physical isolation → 5-layer anonymity check → audits (proof / claim / citation `--soft-only`) → microedits via `/auto-paper-improvement-loop --edit-whitelist` with per-round diff gate → adversarial gate via `/kill-argument` → final compile + Overleaf push via `/overleaf-sync`. Two prerequisite SKILL upgrades shipped in the same PR: **`/auto-paper-improvement-loop --edit-whitelist <path>`** (YAML schema with allowed/forbidden paths + `forbidden_operations` like `new_cite` / `new_theorem_env` / `numerical_claim`, `forbidden_deletions`, `requires_user_approval_for`, `max_edits_per_round`) and **`/citation-audit --soft-only`** (translates KEEP/FIX/REPLACE/REMOVE verdicts to text-rewrite proposals when bib is frozen; hallucinated citations get `drop_cite_in_body_only` action). Master `RESUBMIT_REPORT.json` ledger per `shared-references/assurance-contract.md`; 7-verdict failure mode table including `USER_DECISION` runtime state.
@@ -225,7 +226,7 @@ bash tools/smart_update_codex.sh --local ~/.codex/skills --apply
 
 # 2. Set up Codex MCP (for review skills)
 npm install -g @openai/codex
-codex setup                    # set model to gpt-5.4 when prompted
+codex setup                    # set model to gpt-5.5 when prompted
 claude mcp add codex -s user -- codex mcp-server
 
 # 3. Use in Claude Code
@@ -319,7 +320,7 @@ claude
 > /proof-checker "paper/" — reviewer: oracle-pro                                # Pro-level proof verification
 > ```
 
-> **Important:** Codex MCP uses the model from `~/.codex/config.toml`, not from skill files. Make sure it says `model = "gpt-5.4"` (recommended). Other options: `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`. Run `codex setup` or edit the file directly.
+> **Important:** Codex MCP uses the model from `~/.codex/config.toml`, not from skill files. Make sure it says `model = "gpt-5.5"` (recommended). Other options: `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`. Run `codex setup` or edit the file directly.
 
 > **Want Codex to execute but Claude Code to review?** See [`docs/CODEX_CLAUDE_REVIEW_GUIDE.md`](docs/CODEX_CLAUDE_REVIEW_GUIDE.md). That path installs the base `skills/skills-codex/*`, then overlays `skills/skills-codex-claude-review/*`, and routes review-heavy skills through the local `claude-review` MCP bridge.
 
@@ -1851,7 +1852,7 @@ Override inline: `/paper-write — target venue: NeurIPS, illustration: mermaid`
 
 | Constant | Default | Description |
 |----------|---------|-------------|
-| `REVIEWER_MODEL` | `gpt-5.4` | OpenAI model used via Codex MCP. Also available: `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`. See [supported models](https://developers.openai.com/codex/models/) for full list. |
+| `REVIEWER_MODEL` | `gpt-5.5` | OpenAI model used via Codex MCP. Also available: `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`. See [supported models](https://developers.openai.com/codex/models/) for full list. |
 
 - **Prompt templates** — tailor the review persona and evaluation criteria
 - **`allowed-tools`** — restrict or expand what each skill can do
@@ -1886,7 +1887,7 @@ Only replace the executor (Claude → GLM), keep GPT-5.4 as reviewer via Codex M
 ```bash
 npm install -g @anthropic-ai/claude-code
 npm install -g @openai/codex
-codex setup   # set model to gpt-5.4
+codex setup   # set model to gpt-5.5
 ```
 
 Configure `~/.claude/settings.json`:
@@ -1953,7 +1954,7 @@ claude
 <details>
 <summary>Show 6 more completed items</summary>
 
-- [x] **Configurable REVIEWER_MODEL** — all Codex-dependent skills support custom reviewer model (default `gpt-5.4`, also works with `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`, etc.)
+- [x] **Configurable REVIEWER_MODEL** — all Codex-dependent skills support custom reviewer model (default `gpt-5.5`, also works with `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`, etc.)
 - [x] **Local paper library scanning** — `/research-lit` scans local `papers/` and `literature/` directories before external search, leveraging papers you've already read
 - [x] **Idea Discovery pipeline** — `/idea-discovery` orchestrates research-lit → idea-creator → novelty-check → research-review in one command, with pilot experiments on GPU
 - [x] **Full research pipeline** — `/research-pipeline` chains Workflow 1 (idea discovery) → implementation → Workflow 2 (auto-review-loop) end-to-end
