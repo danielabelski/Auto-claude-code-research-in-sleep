@@ -20,6 +20,22 @@
   </a>
 </p>
 
+🔥 [**ARIS-Code CLI — 独立安装版**](docs/ARIS-Code-README_CN.md) · [English](docs/ARIS-Code-README_EN.md) | [⬇️ 下载](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/releases/latest)
+
+> 📰 **ARIS-Code v0.4.5** (2026-05-13) — **推理模型一等公民支持** — Thinking content blocks 全链路（修 [#161](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/161)）+ `reasoning_effort='xhigh'` 真正发到 GPT-5.5 / o1 / o3 / o4 / DeepSeek-thinking 请求体 | **DeepSeek V4 Pro** + **Xiaomi MiMo** + **Qwen 3.6** + **Doubao** 加入 `/setup`（选项 7-10）| **Claude Code 对象式 hooks** 解析器 | 默认模型升级 **Claude Opus 4.7 + GPT-5.5** | REPL 输入加固：折行不再无限复制 / Cmd+V 多行粘贴不再每行 auto-submit / CJK 字符在折行边界正确渲染 | 新增 GitHub Actions CI workflow | 贡献者：[@GO-player-hhy](https://github.com/GO-player-hhy) ([#186](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/pull/186))、[@Jxy-yxJ](https://github.com/Jxy-yxJ) ([#171](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/pull/171))、[@GetIT-Sunday](https://github.com/GetIT-Sunday) ([#216](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/pull/216) 部分)
+>
+> <details><summary>历史版本</summary>
+>
+> **v0.4.4** (2026-04-20) — Setup UX + reviewer 路由修复（修 [#158](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/158) / [#162](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/162)）| Anthropic + 自定义 URL 不再强制 Bearer | LlmReview 智能 fallback
+>
+> **v0.4.3** (2026-04-17) — 第三方 Anthropic-compat 代理支持（Bedrock 等）| 致谢 [@screw-44](https://github.com/screw-44)
+>
+> **v0.4.2** (2026-04-17) — Auto-compaction 修复 | OpenAI-compat 摘要保留 | Shell API key 不再被清
+>
+> **v0.4.1** (2026-04-15) — Plan 模式 + Ctrl+C 协作中断 + 自动重试 (429/5xx) | 多文件 Memory
+>
+> </details>
+
 [![技术报告](https://img.shields.io/badge/技术报告-arXiv%3A2605.03042-b31b1b?style=flat&logo=arxiv)](https://huggingface.co/papers/2605.03042) · [![ARIS 介绍幻灯](https://img.shields.io/badge/ARIS%20介绍幻灯-PDF-EC1C24?style=flat&logo=adobeacrobatreader&logoColor=white)](docs/aris_intro_slides.pdf) · [![PaperWeekly 收录](https://img.shields.io/badge/PaperWeekly-收录-red?style=flat)](https://mp.weixin.qq.com/s/tDniVryVGjDkkkWl-5sTkQ) · [![PaperWeekly — MiniMax-M2.7](https://img.shields.io/badge/PaperWeekly-MiniMax--M2.7-red?style=flat)](https://mp.weixin.qq.com/s/KLFU74lAL2FAIc9K6i1Kqg) · [![Featured in awesome-agent-skills](https://img.shields.io/badge/Featured%20in-awesome--agent--skills-blue?style=flat&logo=github)](https://github.com/VoltAgent/awesome-agent-skills) · [![AI Digital Crew - Project of the Day](https://img.shields.io/badge/AI%20Digital%20Crew-Project%20of%20the%20Day%20(2026.03.14)-orange?style=flat)](https://aidigitalcrew.com) · [💬 加入交流群](#-交流群) · [![引用](https://img.shields.io/badge/📖_引用-BibTeX-green?style=flat)](#-引用)
 
 基于 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 的自定义 Skills，用于自主 ML 科研工作流。核心机制是**跨模型协作**——Claude Code 负责执行（读文件、写代码、跑实验、收结果），外部 LLM（通过 [Codex MCP](https://github.com/openai/codex)）负责评审（打分、找弱点、建议修复）。两个模型互不评自己的作业，形成真正的反馈循环。🔀 **也支持[替代模型组合](#-替代模型组合)（Kimi、LongCat、DeepSeek 等）——无需 Claude 或 OpenAI API。** 例如 [MiniMax-M2.7 + GLM-5 或 GLM-5 + MiniMax-M2.7](docs/MiniMax-GLM-Configuration.md)。 🤖 **[Codex CLI 原生版](skills/skills-codex/)** — 完整 skill 集合也支持 OpenAI Codex。🖱️ **[Cursor](docs/CURSOR_ADAPTATION.md)** — Cursor 也能用。🖥️ **[Trae](docs/TRAE_ARIS_RUNBOOK_CN.md)** — 字节跳动 AI IDE。🚀 **[Antigravity](docs/ANTIGRAVITY_ADAPTATION_CN.md)** — Google Agent-First IDE。🆓 **[ModelScope 免费接入](docs/MODELSCOPE_GUIDE.md)——零成本，零锁定。**
