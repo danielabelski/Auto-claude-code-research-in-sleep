@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="96" viewBox="0 0 360 96" role="img" aria-label="Hugging Face Daily Paper · #1 Paper of the Day">
+  <title>Hugging Face Daily Paper · #1 Paper of the Day</title>
+  <!-- Outer rounded rectangle: gold border, near-transparent fill so it blends in light + dark README themes -->
+  <rect x="2" y="2" width="356" height="92" rx="14" ry="14"
+        fill="none" stroke="#B8860B" stroke-width="2"/>
+
+  <!-- Laurel wreath + "1" -->
+  <g transform="translate(54,48)" fill="#B8860B">
+    <!-- Left arc + leaves -->
+    <path d="M -26,-26 Q -42,0 -26,26" stroke="#B8860B" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-30" cy="-16" rx="6.5" ry="2.6" transform="rotate(-55 -30 -16)"/>
+    <ellipse cx="-35" cy="-6"  rx="6.5" ry="2.6" transform="rotate(-80 -35 -6)"/>
+    <ellipse cx="-36" cy="4"   rx="6.5" ry="2.6" transform="rotate(-100 -36 4)"/>
+    <ellipse cx="-33" cy="14"  rx="6.5" ry="2.6" transform="rotate(-125 -33 14)"/>
+    <ellipse cx="-26" cy="22"  rx="6.5" ry="2.6" transform="rotate(-150 -26 22)"/>
+
+    <!-- Right arc + leaves (mirrored) -->
+    <path d="M 26,-26 Q 42,0 26,26" stroke="#B8860B" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="30" cy="-16" rx="6.5" ry="2.6" transform="rotate(55 30 -16)"/>
+    <ellipse cx="35" cy="-6"  rx="6.5" ry="2.6" transform="rotate(80 35 -6)"/>
+    <ellipse cx="36" cy="4"   rx="6.5" ry="2.6" transform="rotate(100 36 4)"/>
+    <ellipse cx="33" cy="14"  rx="6.5" ry="2.6" transform="rotate(125 33 14)"/>
+    <ellipse cx="26" cy="22"  rx="6.5" ry="2.6" transform="rotate(150 26 22)"/>
+
+    <!-- Number 1 -->
+    <text x="0" y="14" font-family="Georgia, 'Times New Roman', serif" font-size="44" font-weight="700"
+          fill="#B8860B" text-anchor="middle">1</text>
+  </g>
+
+  <!-- Text block -->
+  <text x="118" y="40" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#B8860B"
+        font-weight="500">Huggingface Daily Paper</text>
+  <text x="118" y="70" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700"
+        fill="#B8860B">#1 Paper of the Day</text>
+</svg>
