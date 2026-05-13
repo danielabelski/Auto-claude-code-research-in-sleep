@@ -351,7 +351,7 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 
 🎉 **社区 Skills（11 个）：** [research-refine](skills/research-refine/SKILL.md) · [experiment-plan](skills/experiment-plan/SKILL.md) · [grant-proposal](skills/grant-proposal/SKILL.md) · [paper-poster](skills/paper-poster/SKILL.md) · [paper-slides](skills/paper-slides/SKILL.md) · [mermaid-diagram](skills/mermaid-diagram/SKILL.md) · [proof-writer](skills/proof-writer/SKILL.md) · [comm-lit-review](skills/comm-lit-review/SKILL.md) · [dse-loop](skills/dse-loop/SKILL.md) · [idea-discovery-robot](skills/idea-discovery-robot/SKILL.md) · [paper-illustration](skills/paper-illustration/SKILL.md)
 
-🌐 **外部项目 & 文档（9 个）：** [rosetta](https://github.com/SyntaxSmith/rosetta) · [open-source-hardening-skills](https://github.com/zeyuzhangzyz/open-source-hardening-skills) · [CitationClaw](https://github.com/VisionXLab/CitationClaw) · [paper-to-course](https://github.com/KaguraTart/paper-to-course) · [Antigravity 适配指南](docs/ANTIGRAVITY_ADAPTATION_CN.md) · [OpenClaw 适配指南](docs/OPENCLAW_ADAPTATION.md) · [Cursor 适配指南](docs/CURSOR_ADAPTATION.md) · [Trae 适配指南](docs/TRAE_ARIS_RUNBOOK_CN.md) · [paper-illustration](skills/paper-illustration/SKILL.md)
+🌐 **外部项目 & 文档（10 个）：** [rosetta](https://github.com/SyntaxSmith/rosetta) · [open-source-hardening-skills](https://github.com/zeyuzhangzyz/open-source-hardening-skills) · [CitationClaw](https://github.com/VisionXLab/CitationClaw) · [paper-to-course](https://github.com/KaguraTart/paper-to-course) · [deep-research-skills](https://github.com/Weizhena/deep-research-skills) · [Antigravity 适配指南](docs/ANTIGRAVITY_ADAPTATION_CN.md) · [OpenClaw 适配指南](docs/OPENCLAW_ADAPTATION.md) · [Cursor 适配指南](docs/CURSOR_ADAPTATION.md) · [Trae 适配指南](docs/TRAE_ARIS_RUNBOOK_CN.md) · [paper-illustration](skills/paper-illustration/SKILL.md)
 
 > 🙌 感谢每一位贡献者！为了 README 的可读性，下方表格折叠展示——但每个 skill 和项目都同样珍贵。欢迎 PR！
 
@@ -375,7 +375,7 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 </details>
 
 <details>
-<summary><b>🌐 外部项目 & 文档（9 个）</b> — 点击展开</summary>
+<summary><b>🌐 外部项目 & 文档（10 个）</b> — 点击展开</summary>
 
 | 名称 | 领域 | 描述 |
 |------|------|------|
@@ -390,6 +390,7 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 | 🤖 [`skills-codex`](skills/skills-codex/) | 通用 | 主线科研技能的 Codex CLI 同步包，已补入 `training-check`、`result-to-claim`、`ablation-planner`、`rebuttal`，并附带 `shared-references/` 支持目录 |
 | 🎛️ [auto-hparam-tuning](https://github.com/zxh0916/auto-hparam-tuning) | 通用 | 自动超参调优——AI agent 读项目、规划策略、跑实验、分析 TensorBoard、从结果中学习。基于 Hydra |
 | 📚 [paper-to-course](https://github.com/KaguraTart/paper-to-course) | 教育 | 论文转交互式课程——PDF/LaTeX 论文自动转为六模块 HTML 课程，含公式拆解、文献时间线、测验、术语提示。单文件打包，无需服务器 |
+| 🔎 [deep-research-skills](https://github.com/Weizhena/deep-research-skills) | 通用 / Web 搜索 | 模块化 web 搜索策略包——按源拆分独立模块：Stack Overflow / GitHub Issues 错误串调试 / 中文技术社区（CSDN / 掘金 / 知乎 / V2EX / 腾讯阿里云社区）/ 通用 Web（Reddit / HN / Dev.to / Medium）。补 ARIS [`/research-lit`](skills/research-lit/SKILL.md) 以学术源为主的栈，给**非学术**场景（调试、版本兼容追踪、中文技术检索）提供查询策略。by [@Weizhena](https://github.com/Weizhena) |
 
 </details>
 
