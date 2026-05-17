@@ -1580,6 +1580,13 @@ Skills are plain Markdown files. Fork and customize:
 
 ### Full Research Pipeline (`research-pipeline`)
 
+Tune end-to-end behavior: GPU target, arXiv download, code review, human checkpoints, base repo, W&B logging, compact summaries, reference paper, illustration backend, and auto-proceed.
+
+Override inline: `/research-pipeline "topic" — auto proceed: false, illustration: mermaid`
+
+<details>
+<summary><b>Show constants, defaults, and pass-through for <code>/research-pipeline</code></b></summary>
+
 | Constant | Default | Description | Pass-through |
 |----------|---------|-------------|:---:|
 | `AUTO_PROCEED` | true | Auto-continue with top-ranked option if user doesn't respond | → `idea-discovery` |
@@ -1593,9 +1600,14 @@ Skills are plain Markdown files. Fork and customize:
 | `REF_PAPER` | false | Reference paper (PDF path or URL) to base ideas on. Summarized first, then used as context | → `idea-discovery` |
 | `ILLUSTRATION` | `gemini` | AI illustration: `gemini` (default), `mermaid` (free), or `false` (skip) | → `paper-writing` |
 
-Override inline: `/research-pipeline "topic" — auto proceed: false, illustration: mermaid`
+</details>
 
 ### Auto Review Loop (`auto-review-loop`)
+
+Tune stopping criteria: how many review→fix iterations, score threshold to declare submission-ready, and GPU-hour budget above which long experiments get flagged for manual follow-up.
+
+<details>
+<summary><b>Show stopping criteria for <code>/auto-review-loop</code></b></summary>
 
 | Constant | Default | Description |
 |----------|---------|-------------|
@@ -1603,7 +1615,16 @@ Override inline: `/research-pipeline "topic" — auto proceed: false, illustrati
 | `POSITIVE_THRESHOLD` | 6/10 | Score at which the loop stops (submission-ready) |
 | `> 4 GPU-hour skip` | 4h | Experiments exceeding this are flagged for manual follow-up |
 
+</details>
+
 ### Idea Discovery (`idea-discovery` / `idea-creator`)
+
+Tune the pilot phase: max hours per pilot, hard timeout, max ideas piloted in parallel, total GPU budget, plus auto-proceed and arXiv download toggles.
+
+Override inline: `/idea-discovery "topic" — pilot budget: 4h per idea, sources: zotero, arxiv download: true`
+
+<details>
+<summary><b>Show pilot-budget constants for <code>/idea-discovery</code> and <code>/idea-creator</code></b></summary>
 
 | Constant | Default | Description | Pass-through |
 |----------|---------|-------------|:---:|
@@ -1614,9 +1635,16 @@ Override inline: `/research-pipeline "topic" — auto proceed: false, illustrati
 | `AUTO_PROCEED` | true | Auto-continue with top-ranked option if user doesn't respond | — |
 | `ARXIV_DOWNLOAD` | false | Download top arXiv PDFs after literature search | → `research-lit` |
 
-Override inline: `/idea-discovery "topic" — pilot budget: 4h per idea, sources: zotero, arxiv download: true`
+</details>
 
 ### Experiment Bridge (`experiment-bridge`)
+
+Tune deployment safety: GPT-5.4 code review, auto-deploy after review, sanity-test smallest experiment first, parallel run cap, W&B logging, and base-repo URL.
+
+Override inline: `/experiment-bridge — base repo: https://github.com/org/project`
+
+<details>
+<summary><b>Show deployment and safety constants for <code>/experiment-bridge</code></b></summary>
 
 | Constant | Default | Description |
 |----------|---------|-------------|
@@ -1627,9 +1655,16 @@ Override inline: `/idea-discovery "topic" — pilot budget: 4h per idea, sources
 | `WANDB` | false | Auto-add W&B logging. Requires `wandb_project` in CLAUDE.md |
 | `BASE_REPO` | false | GitHub repo URL to clone as base codebase for experiments |
 
-Override inline: `/experiment-bridge — base repo: https://github.com/org/project`
+</details>
 
 ### Literature Search (`research-lit`)
+
+Tune sourcing: local PDF directories, local-scan cap, which sources to search (Zotero / Obsidian / web / Semantic Scholar / DeepXiv / Exa), and arXiv PDF download settings.
+
+Override inline: `/research-lit "topic" — sources: zotero, web`, `/research-lit "topic" — sources: all, deepxiv`, `/research-lit "topic" — sources: all, exa`, `/research-lit "topic" — arxiv download: true, max download: 10`
+
+<details>
+<summary><b>Show source-selection and arXiv download constants for <code>/research-lit</code></b></summary>
 
 | Constant | Default | Description |
 |----------|---------|-------------|
@@ -1639,9 +1674,16 @@ Override inline: `/experiment-bridge — base repo: https://github.com/org/proje
 | `ARXIV_DOWNLOAD` | false | When `true`, download top relevant arXiv PDFs to PAPER_LIBRARY after search |
 | `ARXIV_MAX_DOWNLOAD` | 5 | Maximum number of PDFs to download when `ARXIV_DOWNLOAD = true` |
 
-Override inline: `/research-lit "topic" — sources: zotero, web`, `/research-lit "topic" — sources: all, deepxiv`, `/research-lit "topic" — sources: all, exa`, `/research-lit "topic" — arxiv download: true, max download: 10`
+</details>
 
 ### Paper Writing (`paper-write`)
+
+Tune paper format: real BibTeX from DBLP, target venue (ICLR/NeurIPS/ICML/CVPR/ACL/AAAI/IEEE…), anonymous author block, page limit, and illustration backend.
+
+Override inline: `/paper-write — target venue: NeurIPS, illustration: mermaid`
+
+<details>
+<summary><b>Show paper-format and illustration constants for <code>/paper-write</code></b></summary>
 
 | Constant | Default | Description |
 |----------|---------|-------------|
@@ -1651,16 +1693,23 @@ Override inline: `/research-lit "topic" — sources: zotero, web`, `/research-li
 | `MAX_PAGES` | 9 | Page limit. ML conferences: main body excl. refs. IEEE: total pages incl. refs |
 | `ILLUSTRATION` | `gemini` | AI illustration mode: `gemini` (default, needs `GEMINI_API_KEY`), `mermaid` (free), or `false` (skip) |
 
-Override inline: `/paper-write — target venue: NeurIPS, illustration: mermaid`
+</details>
 
 ### General (all skills using Codex MCP)
+
+Tune the reviewer model used by every Codex MCP call (default `gpt-5.5`), or fork the SKILL.md to customize prompt templates and the per-skill tool allowlist.
+
+- **Prompt templates** — tailor the review persona and evaluation criteria
+- **`allowed-tools`** — restrict or expand what each skill can do
+
+<details>
+<summary><b>Show Codex MCP reviewer-model options</b></summary>
 
 | Constant | Default | Description |
 |----------|---------|-------------|
 | `REVIEWER_MODEL` | `gpt-5.5` | OpenAI model used via Codex MCP. Also available: `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`. See [supported models](https://developers.openai.com/codex/models/) for full list. |
 
-- **Prompt templates** — tailor the review persona and evaluation criteria
-- **`allowed-tools`** — restrict or expand what each skill can do
+</details>
 
 ## 🔀 Alternative Model Combinations
 
@@ -1681,13 +1730,40 @@ Don't have Claude / OpenAI API access? You can swap in other models — same cro
 | **Alt H** 🆕 | Antigravity (Claude Opus 4.6 / Gemini 3.1 Pro) | GPT-5.4 (Codex MCP) or any via llm-chat | No | Optional | [ANTIGRAVITY_ADAPTATION](docs/ANTIGRAVITY_ADAPTATION.md) |
 | **Alt I** 🆕 | Codex CLI | Gemini direct API (`gemini-review` MCP) | No | No | [CODEX_GEMINI_REVIEW_GUIDE](docs/CODEX_GEMINI_REVIEW_GUIDE.md) |
 
-**Alt C** supports tested providers: GLM (Z.ai), Kimi (Moonshot), LongCat (Meituan) as executors; DeepSeek, MiniMax as reviewers. Any OpenAI-compatible API should also work via the generic [`llm-chat`](mcp-servers/llm-chat/) MCP server. **Alt D** uses [Alibaba Coding Plan](https://bailian.console.aliyun.com/) — one API key for both executor and reviewer, 4 models included (Kimi, Qwen, GLM, MiniMax). **Alt E** uses [ModelScope](https://www.modelscope.cn/) — **free** (2000 calls/day), one key, no automation restrictions. **Alt G** keeps Codex as executor but swaps the reviewer to Claude Code CLI via the local `claude-review` MCP bridge, with async polling for long paper/review prompts. **Alt H** uses [Google Antigravity](https://antigravity.google/) as the executor with native SKILL.md support — choose Claude Opus 4.6 (Thinking) or Gemini 3.1 Pro (high) as the execution model. **Alt I** keeps Codex as executor, adds only a thin `skills-codex-gemini-review` overlay, and routes the reviewer-aware predefined skills through the local `gemini-review` MCP bridge with direct Gemini API by default. It is the closest Gemini analogue to the existing Codex+Claude review path, while minimizing skill changes and now also covers poster PNG review via the same bridge. Free-tier availability, rate limits, and data-use terms remain subject to Google's current policy.
+**How to choose:**
+
+- **Default** — you have Claude + OpenAI access and want the most tested route.
+- **Alt A** — only swap Claude for GLM, keep GPT-5.4 as reviewer via Codex MCP.
+- **Alt B** or **Alt E** — no Claude API, no OpenAI API (Alt E is free via ModelScope).
+- **Alt C** or **Alt D** — OpenAI-compatible mix-and-match (Alt D = one Alibaba key for both sides).
+- **Alt G** or **Alt I** — Codex stays as executor, only the reviewer changes (Claude or Gemini).
+- **Alt H** — Antigravity as the executor (Claude Opus 4.6 or Gemini 3.1 Pro), GPT-5.4 reviewer.
 
 \* Alt G normally relies on local Codex CLI and Claude Code CLI logins. Direct API keys are optional, not required.
 
+<details>
+<summary><b>Show detailed provider notes for Alt C/D/E/G/H/I</b></summary>
+
+**Alt C** supports tested providers: GLM (Z.ai), Kimi (Moonshot), LongCat (Meituan) as executors; DeepSeek, MiniMax as reviewers. Any OpenAI-compatible API should also work via the generic [`llm-chat`](mcp-servers/llm-chat/) MCP server.
+
+**Alt D** uses [Alibaba Coding Plan](https://bailian.console.aliyun.com/) — one API key for both executor and reviewer, 4 models included (Kimi, Qwen, GLM, MiniMax).
+
+**Alt E** uses [ModelScope](https://www.modelscope.cn/) — **free** (2000 calls/day), one key, no automation restrictions.
+
+**Alt G** keeps Codex as executor but swaps the reviewer to Claude Code CLI via the local `claude-review` MCP bridge, with async polling for long paper/review prompts.
+
+**Alt H** uses [Google Antigravity](https://antigravity.google/) as the executor with native SKILL.md support — choose Claude Opus 4.6 (Thinking) or Gemini 3.1 Pro (high) as the execution model.
+
+**Alt I** keeps Codex as executor, adds only a thin `skills-codex-gemini-review` overlay, and routes the reviewer-aware predefined skills through the local `gemini-review` MCP bridge with direct Gemini API by default. It is the closest Gemini analogue to the existing Codex+Claude review path, while minimizing skill changes and now also covers poster PNG review via the same bridge. Free-tier availability, rate limits, and data-use terms remain subject to Google's current policy.
+
+</details>
+
 ### Alt A: GLM + GPT
 
-Only replace the executor (Claude → GLM), keep GPT-5.4 as reviewer via Codex MCP.
+Only replace the executor (Claude → GLM via Z.ai), keep GPT-5.4 as reviewer via Codex MCP. Codex CLI reuses your existing `OPENAI_API_KEY`; no extra reviewer-side config.
+
+<details>
+<summary><b>Show Alt A setup commands and <code>~/.claude/settings.json</code></b></summary>
 
 ```bash
 npm install -g @anthropic-ai/claude-code
@@ -1716,7 +1792,7 @@ Configure `~/.claude/settings.json`:
 }
 ```
 
-Codex CLI uses your existing `OPENAI_API_KEY` (from `~/.codex/config.toml` or environment) — no extra config needed for the reviewer side.
+</details>
 
 ### Alt B: GLM + MiniMax
 
@@ -1730,6 +1806,11 @@ Example combinations: GLM + DeepSeek, Kimi + MiniMax, Claude + DeepSeek, LongCat
 
 ### After Setup: Install Skills & Verify
 
+Use the project-local symlink install from [§ Install Skills above](#install-skills) — that's the recommended path for all routes. The global-copy fallback below also works if you prefer everything under `~/.claude/skills/`.
+
+<details>
+<summary><b>Show global-copy fallback install commands and the non-Claude executor verification prompt</b></summary>
+
 ```bash
 git clone https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git
 cd Auto-claude-code-research-in-sleep
@@ -1737,7 +1818,7 @@ cp -r skills/* ~/.claude/skills/
 claude
 ```
 
-> **⚠️ For non-Claude executors (GLM, Kimi, etc.):** Let the model read through the project once to ensure skills are correctly parsed. This is especially important if you've [rewritten skills](#-alternative-model-combinations) to use a different reviewer MCP (e.g., `mcp__llm-chat__chat` instead of `mcp__codex__codex`) — the new executor needs to understand the changed tool call patterns:
+> **⚠️ For non-Claude executors (GLM, Kimi, etc.):** Let the model read through the project once to ensure skills are correctly parsed. This is especially important if you've rewritten skills to use a different reviewer MCP (e.g., `mcp__llm-chat__chat` instead of `mcp__codex__codex`) — the new executor needs to understand the changed tool call patterns:
 >
 > ```
 > Read through this project and verify all skills are working:
@@ -1745,6 +1826,8 @@ claude
 > /idea-discovery, /research-pipeline, /research-lit, /run-experiment,
 > /analyze-results, /monitor-experiment, /pixel-art
 > ```
+
+</details>
 
 > ⚠️ **Note:** Alternative models may behave differently from Claude and GPT-5.4. You may need to tune prompt templates for best results. The core cross-model architecture remains the same.
 
