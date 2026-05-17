@@ -1615,53 +1615,17 @@ claude
 
 ## 🙏 致谢
 
-ARIS 的灵感来自：
+**灵感来自** — 🧪 [AI Scientist](https://github.com/SakanaAI/AI-Scientist)（Sakana）· 📖 [AutoResearch](https://github.com/karpathy/autoresearch)（Karpathy）· 🔭 [FARS](https://analemma.ai/blog/introducing-fars/)（Analemma）· 🎨 [PaperBanana](https://github.com/dwzhu-pku/PaperBanana)（PKU）。
 
-- 🧪 [AI Scientist](https://github.com/SakanaAI/AI-Scientist)（Sakana AI）— 自动化科研先驱
-- 📖 [AutoResearch](https://github.com/karpathy/autoresearch)（Andrej Karpathy）— 端到端科研自动化
-- 🔭 [FARS](https://analemma.ai/blog/introducing-fars/)（Analemma）— 全自动科研系统
-- 🎨 [PaperBanana](https://github.com/dwzhu-pku/PaperBanana)（PKU）— 多 Agent 学术插图框架
+**核心基础设施** — [Claude Code](https://docs.anthropic.com/en/docs/claude-code)（执行层骨干）· [Codex CLI](https://github.com/openai/codex)（通过 MCP 实现跨模型审稿）。
 
-本项目构建于并集成了许多优秀的开源项目：
+**集成** — **Zotero**（[指南](docs/integrations/ZOTERO_CN.md)）：[zotero-mcp](https://github.com/54yyyu/zotero-mcp)、[Zotero](https://www.zotero.org/)。**Obsidian**（[指南](docs/integrations/OBSIDIAN_CN.md)）：[mcpvault](https://github.com/bitbonsai/mcpvault)、[obsidian-skills](https://github.com/kepano/obsidian-skills)（Obsidian CEO [Steph Ango](https://github.com/kepano) 维护）。**飞书/Lark**（[指南](docs/integrations/FEISHU_CN.md)）：[feishu-claude-code](https://github.com/joewongjc/feishu-claude-code)、[clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu)、[cc-connect](https://github.com/chenhg5/cc-connect)、[lark-openapi-mcp](https://github.com/larksuite/lark-openapi-mcp)。
 
-**核心基础设施**
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — Anthropic 的 Claude CLI，执行层骨干
-- [Codex CLI](https://github.com/openai/codex) — OpenAI 的 CLI，作为 MCP server 实现跨模型审稿
+**论文写作灵感** — [claude-scholar](https://github.com/Galaxy-Dawn/claude-scholar) · [Research-Paper-Writing-Skills](https://github.com/Master-cai/Research-Paper-Writing-Skills) · [baoyu-skills](https://github.com/jimliu/baoyu-skills)。**社区** — [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills)（已收录）。
 
-**Zotero 集成**（[安装指南](docs/integrations/ZOTERO_CN.md)）
-- [zotero-mcp](https://github.com/54yyyu/zotero-mcp) — Zotero MCP server，语义搜索 + PDF 标注
-- [Zotero](https://www.zotero.org/) — 开源文献管理器
+**平台适配** — 🤖 [@Falling-Flower](https://github.com/Falling-Flower)（Codex CLI 适配 via `spawn_agent`）· 🔧 [@No-518](https://github.com/No-518)（Codex skill 维护）· 🖱️ [@YecanLee](https://github.com/YecanLee)（[Cursor 适配指南](docs/CURSOR_ADAPTATION.md) + 本地 GPU 文档）· 🏆 [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay)（首个 ARIS 全流程社区论文，CS 会议评分 8/10）。
 
-**Obsidian 集成**（[安装指南](docs/integrations/OBSIDIAN_CN.md)）
-- [mcpvault](https://github.com/bitbonsai/mcpvault) — Obsidian vault MCP server（不需要打开 Obsidian）
-- [obsidian-skills](https://github.com/kepano/obsidian-skills) — Obsidian CEO Steph Ango 维护的 Claude Code skills
-
-**论文写作灵感来源**
-- [claude-scholar](https://github.com/Galaxy-Dawn/claude-scholar) — 用 Claude 写学术论文
-- [Research-Paper-Writing-Skills](https://github.com/Master-cai/Research-Paper-Writing-Skills) — 论文写作 skill 模板
-- [baoyu-skills](https://github.com/jimliu/baoyu-skills) — Claude Code skills 合集
-
-**飞书集成**（[安装指南](docs/integrations/FEISHU_CN.md)）
-- [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) — 飞书 ↔ Claude Code 双向桥接
-- [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu) — 飞书 Claude 机器人
-- [cc-connect](https://github.com/chenhg5/cc-connect) — 多平台消息桥接
-- [lark-openapi-mcp](https://github.com/larksuite/lark-openapi-mcp) — 飞书官方 MCP server
-
-**社区**
-- [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) — Claude Code skills 精选列表（已收录）
-
-**特别感谢 — 平台适配**
-
-ARIS 能在这么多平台上运行，离不开这些贡献者：
-
-- 🤖 [@Falling-Flower](https://github.com/Falling-Flower) — 将全部 ARIS skills 适配为 [Codex CLI](https://github.com/openai/codex) 版本（`spawn_agent`）
-- 🔧 [@No-518](https://github.com/No-518) — 持续维护 Codex skill 集合，保持与最新更新同步
-- 🖱️ [@YecanLee](https://github.com/YecanLee) — 编写 [Cursor 适配指南](docs/CURSOR_ADAPTATION.md)及本地 GPU 配置文档
-- 🏆 [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) — 首个 ARIS 全流程完成的社区论文，CS 会议评分 8/10
-
-**特别感谢 — 架构与愿景**
-
-- 💡 [@JingxuanKang](https://github.com/JingxuanKang) — 不止于代码贡献（training-check、result-to-claim、ablation-planner、watchdog、模板、session 恢复），更深度参与了 ARIS 的架构讨论——compact 模式、工作流状态管理、自主科研工作流的愿景。今天很多核心功能——从结构化项目文件到 context-aware session 恢复——都源自这些对话。
+**架构与愿景** — 💡 [@JingxuanKang](https://github.com/JingxuanKang)：不止于代码贡献（training-check、result-to-claim、ablation-planner、watchdog、模板、session 恢复），更深度参与 ARIS 架构讨论——compact 模式、工作流状态管理、自主科研愿景——今天很多核心功能（结构化项目文件、context-aware session 恢复）都源自这些对话。
 
 ## License
 

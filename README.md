@@ -1954,53 +1954,17 @@ If you use ARIS in your research, please cite:
 
 ## 🙏 Acknowledgements
 
-ARIS is inspired by:
+**Inspired by** — 🧪 [AI Scientist](https://github.com/SakanaAI/AI-Scientist) (Sakana) · 📖 [AutoResearch](https://github.com/karpathy/autoresearch) (Karpathy) · 🔭 [FARS](https://analemma.ai/blog/introducing-fars/) (Analemma) · 🎨 [PaperBanana](https://github.com/dwzhu-pku/PaperBanana) (PKU).
 
-- 🧪 [AI Scientist](https://github.com/SakanaAI/AI-Scientist) (Sakana AI) — Automated research pioneer
-- 📖 [AutoResearch](https://github.com/karpathy/autoresearch) (Andrej Karpathy) — End-to-end research automation
-- 🔭 [FARS](https://analemma.ai/blog/introducing-fars/) (Analemma) — Fully Automated Research System
-- 🎨 [PaperBanana](https://github.com/dwzhu-pku/PaperBanana) (PKU) — Multi-agent academic illustration framework
+**Core infra** — [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (execution backbone) · [Codex CLI](https://github.com/openai/codex) (cross-model review via MCP).
 
-This project builds on and integrates with many excellent open-source projects:
+**Integrations** — **Zotero** ([guide](docs/integrations/ZOTERO.md)): [zotero-mcp](https://github.com/54yyyu/zotero-mcp), [Zotero](https://www.zotero.org/). **Obsidian** ([guide](docs/integrations/OBSIDIAN.md)): [mcpvault](https://github.com/bitbonsai/mcpvault), [obsidian-skills](https://github.com/kepano/obsidian-skills) (by Obsidian CEO [Steph Ango](https://github.com/kepano)). **Feishu/Lark** ([guide](docs/integrations/FEISHU.md)): [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code), [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu), [cc-connect](https://github.com/chenhg5/cc-connect), [lark-openapi-mcp](https://github.com/larksuite/lark-openapi-mcp).
 
-**Core Infrastructure**
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — Anthropic's CLI for Claude, the execution backbone
-- [Codex CLI](https://github.com/openai/codex) — OpenAI's CLI, used as MCP server for cross-model review
+**Paper-writing inspiration** — [claude-scholar](https://github.com/Galaxy-Dawn/claude-scholar) · [Research-Paper-Writing-Skills](https://github.com/Master-cai/Research-Paper-Writing-Skills) · [baoyu-skills](https://github.com/jimliu/baoyu-skills). **Community** — [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) (featured).
 
-**Zotero Integration** ([setup guide](docs/integrations/ZOTERO.md))
-- [zotero-mcp](https://github.com/54yyyu/zotero-mcp) — Zotero MCP server with semantic search and PDF annotations
-- [Zotero](https://www.zotero.org/) — Open-source reference manager
+**Platform adaptation** — 🤖 [@Falling-Flower](https://github.com/Falling-Flower) (Codex CLI adaptation via `spawn_agent`) · 🔧 [@No-518](https://github.com/No-518) (Codex skill maintenance) · 🖱️ [@YecanLee](https://github.com/YecanLee) ([Cursor guide](docs/CURSOR_ADAPTATION.md) + local GPU docs) · 🏆 [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) (first ARIS community paper, CS conference 8/10).
 
-**Obsidian Integration** ([setup guide](docs/integrations/OBSIDIAN.md))
-- [mcpvault](https://github.com/bitbonsai/mcpvault) — Obsidian vault MCP server (no app required)
-- [obsidian-skills](https://github.com/kepano/obsidian-skills) — Claude Code skills for Obsidian Markdown by Steph Ango (Obsidian CEO)
-
-**Paper Writing Inspiration**
-- [claude-scholar](https://github.com/Galaxy-Dawn/claude-scholar) — Academic paper writing with Claude
-- [Research-Paper-Writing-Skills](https://github.com/Master-cai/Research-Paper-Writing-Skills) — Paper writing skill templates
-- [baoyu-skills](https://github.com/jimliu/baoyu-skills) — Claude Code skills collection
-
-**Feishu/Lark Integration** ([setup guide](docs/integrations/FEISHU.md))
-- [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) — Bidirectional Feishu ↔ Claude Code bridge
-- [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu) — Feishu bot for Claude
-- [cc-connect](https://github.com/chenhg5/cc-connect) — Multi-platform messaging bridge
-- [lark-openapi-mcp](https://github.com/larksuite/lark-openapi-mcp) — Official Lark MCP server
-
-**Community**
-- [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) — Curated list of Claude Code skills (featured)
-
-**Special Thanks — Platform Adaptation**
-
-ARIS wouldn't run on so many platforms without these contributors:
-
-- 🤖 [@Falling-Flower](https://github.com/Falling-Flower) — adapted all ARIS skills for [Codex CLI](https://github.com/openai/codex) using `spawn_agent`
-- 🔧 [@No-518](https://github.com/No-518) — ongoing maintenance of the Codex skill set, keeping parity with latest updates
-- 🖱️ [@YecanLee](https://github.com/YecanLee) — wrote the [Cursor adaptation guide](docs/CURSOR_ADAPTATION.md) and local GPU setup docs
-- 🏆 [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) — first community paper built entirely with ARIS, scored 8/10 at CS conference
-
-**Special Thanks — Architecture & Vision**
-
-- 💡 [@JingxuanKang](https://github.com/JingxuanKang) — beyond code contributions (training-check, result-to-claim, ablation-planner, watchdog, templates, session recovery), deeply shaped ARIS through discussions on architecture design, compact mode, workflow state management, and the vision of what autonomous research workflows should look like. Many of today's core features — from structured project files to context-aware session recovery — grew out of these conversations.
+**Architecture & vision** — 💡 [@JingxuanKang](https://github.com/JingxuanKang): beyond code (training-check, result-to-claim, ablation-planner, watchdog, templates, session recovery), deeply shaped ARIS through discussions on compact mode, workflow state management, and the vision of autonomous research — many of today's core features (structured project files, context-aware session recovery) grew out of these conversations.
 
 ## License
 
