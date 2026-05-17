@@ -80,6 +80,16 @@ ARIS 读论文 → 找弱点 → 克隆代码 → 针对*那些*弱点用*那套
 /rebuttal "paper/ + reviews" — venue: ICML, character limit: 5000
 ```
 
+三道安全门：
+- 🔒 **不编造** — 每句话有出处
+- 🔒 **不过度承诺** — 没批准的不承诺
+- 🔒 **全覆盖** — 每个审稿意见都追踪
+
+两版输出：`PASTE_READY.txt`（精确字数，直接粘贴）+ `REBUTTAL_DRAFT_rich.md`（详细版，自己改）
+
+<details>
+<summary><b>展开 rebuttal 参数</b> —— venue、character limit（必填）、quick mode、auto experiment、压测轮数、follow-up 上限</summary>
+
 | 参数 | 默认值 | 作用 |
 |------|--------|------|
 | `venue` | `ICML` | 目标会议 |
@@ -89,12 +99,7 @@ ARIS 读论文 → 找弱点 → 克隆代码 → 针对*那些*弱点用*那套
 | `max stress test rounds` | `1` | GPT-5.4 压力测试轮数 |
 | `max followup rounds` | `3` | 每个 reviewer follow-up 上限 |
 
-三道安全门：
-- 🔒 **不编造** — 每句话有出处
-- 🔒 **不过度承诺** — 没批准的不承诺
-- 🔒 **全覆盖** — 每个审稿意见都追踪
-
-两版输出：`PASTE_READY.txt`（精确字数，直接粘贴）+ `REBUTTAL_DRAFT_rich.md`（详细版，自己改）
+</details>
 
 **中稿之后** — 论文录了，准备展示：
 
@@ -308,7 +313,7 @@ claude
 
 ## ✨ 功能亮点
 
-- 📊 **31 个可组合 skill** — 自由混搭，或串联为完整流水线（`/idea-discovery`、`/auto-review-loop`、`/paper-writing`、`/research-pipeline`）
+- 📊 **74 个可组合 skill** — 自由混搭，或串联为完整流水线（`/idea-discovery`、`/auto-review-loop`、`/paper-writing`、`/research-pipeline`）。[完整目录 →](docs/SKILLS_CATALOG.md)
 - 🔍 **文献 & 查新** — 多源论文搜索（**[Zotero](docs/integrations/ZOTERO_CN.md)** + **[Obsidian](docs/integrations/OBSIDIAN_CN.md)** + **本地 PDF** + arXiv/Scholar）+ 跨模型查新验证
 - 💡 **Idea 发现** — 文献调研 → 头脑风暴 8-12 个 idea → 查新 → GPU pilot 实验 → 排名报告
 - 🔄 **自动 review 循环** — 4 轮自主审稿，一夜从 5/10 提升到 7.5/10，自动跑 20+ 组 GPU 实验

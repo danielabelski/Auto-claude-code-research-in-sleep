@@ -104,6 +104,16 @@ ARIS reads the paper → finds its weaknesses → clones the codebase → genera
 /rebuttal "paper/ + reviews" — venue: ICML, character limit: 5000
 ```
 
+Three safety gates — rebuttal will NOT finalize if any fails:
+- 🔒 **No fabrication** — every claim maps to paper/review/user-confirmed result
+- 🔒 **No overpromise** — every promise is user-approved
+- 🔒 **Full coverage** — every reviewer concern is tracked
+
+Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DRAFT_rich.md` (extended version for manual editing).
+
+<details>
+<summary><b>Show rebuttal parameters</b> — venue, character limit (required), quick mode, auto experiment, stress test rounds, followup rounds</summary>
+
 | Parameter | Default | What it does |
 |-----------|---------|-------------|
 | `venue` | `ICML` | Target venue (ICML/NeurIPS/ICLR/CVPR/ACL/AAAI/ACM) |
@@ -113,12 +123,7 @@ ARIS reads the paper → finds its weaknesses → clones the codebase → genera
 | `max stress test rounds` | `1` | How many times GPT-5.4 xhigh stress-tests the draft |
 | `max followup rounds` | `3` | Per-reviewer follow-up round limit |
 
-Three safety gates — rebuttal will NOT finalize if any fails:
-- 🔒 **No fabrication** — every claim maps to paper/review/user-confirmed result
-- 🔒 **No overpromise** — every promise is user-approved
-- 🔒 **Full coverage** — every reviewer concern is tracked
-
-Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DRAFT_rich.md` (extended version for manual editing).
+</details>
 
 **After acceptance** — your paper is in, now prepare the presentation:
 
@@ -359,7 +364,7 @@ See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model comb
 
 ## ✨ Features
 
-- 📊 **31 composable skills** — mix and match, or chain into full pipelines (`/idea-discovery`, `/auto-review-loop`, `/paper-writing`, `/research-pipeline`)
+- 📊 **74 composable skills** — mix and match, or chain into full pipelines (`/idea-discovery`, `/auto-review-loop`, `/paper-writing`, `/research-pipeline`). See [full catalog →](docs/SKILLS_CATALOG.md)
 - 🔍 **Literature & novelty** — multi-source paper search (**[Zotero](docs/integrations/ZOTERO.md)** + **[Obsidian](docs/integrations/OBSIDIAN.md)** + **local PDFs** + arXiv/Scholar) + cross-model novelty verification
 - 💡 **Idea discovery** — literature survey → brainstorm 8-12 ideas → novelty check → GPU pilot experiments → ranked report
 - 🔄 **Auto review loop** — 4-round autonomous review, 5/10 → 7.5/10 overnight with 20+ GPU experiments
