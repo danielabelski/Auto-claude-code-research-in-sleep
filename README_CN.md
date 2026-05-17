@@ -947,67 +947,31 @@ export OPENAI_API_KEY="your-key"         # API 模式（快）
 
 ---
 
-## 🧰 全部 Skills
+## 🧰 Skills Catalog
 
-### 🚀 全流程
+ARIS 现有 **74+ 个 skill**，覆盖文献调研、idea 生成、实验、审计、论文写作、
+演讲、专利、meta 工具等。完整目录（每个 skill 含 role / category /
+依赖）在
+**[`docs/SKILLS_CATALOG.md`](docs/SKILLS_CATALOG.md)**，独立成文以保持
+README 可扫读。
 
-| Skill | 功能 | Codex MCP？ |
-|-------|------|:---:|
-| 🏗️ [`research-pipeline`](skills/research-pipeline/SKILL.md) | **端到端**：工作流 1 → 1.5 → 2 → 3，从研究方向到投稿 | 是 |
+**常用入口：**
 
-### 🔍 工作流 1：Idea 发现与方案精炼
+| 场景 | 入口 skill |
+|---|---|
+| 端到端研究（idea → paper） | [`/research-pipeline`](skills/research-pipeline/SKILL.md) |
+| Idea 发现 + 方案精炼 | [`/idea-discovery`](skills/idea-discovery/SKILL.md) |
+| 按计划跑实验 | [`/experiment-bridge`](skills/experiment-bridge/SKILL.md) |
+| 自动 review → 修 → 再 review | [`/auto-review-loop`](skills/auto-review-loop/SKILL.md) |
+| 报告 → 打磨 PDF | [`/paper-writing`](skills/paper-writing/SKILL.md) |
+| 回应审稿意见 | [`/rebuttal`](skills/rebuttal/SKILL.md) |
+| 跨 venue 移植论文 | [`/resubmit-pipeline`](skills/resubmit-pipeline/SKILL.md) |
+| 论文 → 会议演讲 | [`/paper-talk`](skills/paper-talk/SKILL.md) |
+| 持久化研究记忆 | [`/research-wiki`](skills/research-wiki/SKILL.md) |
+| 专利撰写（CN / US / EP） | [`/patent-pipeline`](skills/patent-pipeline/SKILL.md) |
+| ARIS 自我优化 | [`/meta-optimize`](skills/meta-optimize/SKILL.md) |
 
-| Skill | 功能 | Codex MCP？ |
-|-------|------|:---:|
-| 🔭 **[`idea-discovery`](skills/idea-discovery/SKILL.md)** | **流水线编排** — 按顺序调用以下全部 skill | 是 |
-| ├ 📚 [`research-lit`](skills/research-lit/SKILL.md) | 多源文献搜索（[Zotero](#-zotero-集成可选) + [Obsidian](#-obsidian-集成可选) + 本地 PDF + [arXiv API](#arxiv-集成) + 网络） | 否 |
-| ├ 💡 [`idea-creator`](skills/idea-creator/SKILL.md) | 头脑风暴 8-12 个 idea，按可行性筛选，GPU pilot，按信号排序 | 是 |
-| ├ 🔍 [`novelty-check`](skills/novelty-check/SKILL.md) | 多源查新 + GPT-5.4 交叉验证 | 是 |
-| ├ 🔬 [`research-review`](skills/research-review/SKILL.md) | 单轮深度评审（外部 LLM，xhigh 推理） | 是 |
-| └ 🧭 **[`research-refine-pipeline`](skills/research-refine-pipeline/SKILL.md)** | 方法精炼 + 实验规划一条龙 | 是 |
-| 　├ 🔬 [`research-refine`](skills/research-refine/SKILL.md) | 冻结问题锚点 → 迭代精炼方法（最多 5 轮，≥9 分停） | 是 |
-| 　└ 🧪 [`experiment-plan`](skills/experiment-plan/SKILL.md) | Claim-driven 实验路线图，含 ablation、预算和执行顺序 | 否 |
-
-### 🔗 工作流 1.5：实验桥接
-
-| Skill | 功能 | Codex MCP？ |
-|-------|------|:---:|
-| 🔗 **[`experiment-bridge`](skills/experiment-bridge/SKILL.md)** | 读取实验计划 → 实现代码 → sanity check → 部署到 GPU → 收集初始结果 | 否 |
-| ├ 🚀 [`run-experiment`](skills/run-experiment/SKILL.md) | 部署实验到本地（MPS/CUDA）或远程 GPU 服务器 | 否 |
-| └ 👀 [`monitor-experiment`](skills/monitor-experiment/SKILL.md) | 监控实验进度、收集结果 | 否 |
-
-### 🔁 工作流 2：自动科研循环
-
-| Skill | 功能 | Codex MCP？ |
-|-------|------|:---:|
-| 🔁 **[`auto-review-loop`](skills/auto-review-loop/SKILL.md)** | **流水线编排** — 自动 review→修复→再 review（最多 4 轮） | 是 |
-| ├ 🔬 [`research-review`](skills/research-review/SKILL.md) | 深度评审（与工作流 1 共用） | 是 |
-| ├ 🔍 [`novelty-check`](skills/novelty-check/SKILL.md) | 审稿人建议新方向时验证新颖性 | 是 |
-| ├ 🚀 [`run-experiment`](skills/run-experiment/SKILL.md) | 部署实验到本地（MPS/CUDA）或远程 GPU 服务器 | 否 |
-| ├ 📊 [`analyze-results`](skills/analyze-results/SKILL.md) | 分析实验结果、统计、生成对比表 | 否 |
-| └ 👀 [`monitor-experiment`](skills/monitor-experiment/SKILL.md) | 监控实验进度、收集结果 | 否 |
-| 🔁 [`auto-review-loop-llm`](skills/auto-review-loop-llm/SKILL.md) | 同上，但使用任意 OpenAI 兼容 API，通过 [`llm-chat`](mcp-servers/llm-chat/) MCP 服务器 | 否 |
-
-### 📝 工作流 3：论文写作
-
-| Skill | 功能 | Codex MCP？ |
-|-------|------|:---:|
-| 📝 **[`paper-writing`](skills/paper-writing/SKILL.md)** | **流水线编排** — 按顺序调用以下全部 skill | 是 |
-| ├ 📐 [`paper-plan`](skills/paper-plan/SKILL.md) | Claims-evidence 矩阵、章节结构、图表计划、引用规划 | 是 |
-| ├ 📊 [`paper-figure`](skills/paper-figure/SKILL.md) | 出版级 matplotlib/seaborn 图表 + LaTeX 对比表 | 可选 |
-| ├ 🎨 [`paper-illustration`](skills/paper-illustration/SKILL.md) | AI 生成架构图/方法示意图（Gemini），`illustration: true` 时启用 | 否（需 Gemini API） |
-| ├ ✍️ [`paper-write`](skills/paper-write/SKILL.md) | 逐 section LaTeX 生成（ICLR/NeurIPS/ICML）。通过 DBLP/CrossRef 反幻觉 BibTeX | 是 |
-| ├ 🔨 [`paper-compile`](skills/paper-compile/SKILL.md) | 编译 LaTeX 为 PDF，自动修复错误，投稿就绪检查 | 否 |
-| └ 🔄 [`auto-paper-improvement-loop`](skills/auto-paper-improvement-loop/SKILL.md) | 2 轮内容审稿 + 格式检查（4/10 → 8.5/10） | 是 |
-
-### 🛠️ 独立 / 工具类
-
-| Skill | 功能 | Codex MCP？ |
-|-------|------|:---:|
-| 📄 [`arxiv`](skills/arxiv/SKILL.md) | 搜索、下载、摘要 arXiv 论文。可独立使用或作为 `/research-lit` 补充 | 否 |
-| 📝 [`alphaxiv`](skills/alphaxiv/SKILL.md) | 通过 [AlphaXiv](https://alphaxiv.org) 快速查看单篇论文。三级回退：概述 → 全文 Markdown → LaTeX 源码 | 否 |
-| 🎨 [`pixel-art`](skills/pixel-art/SKILL.md) | 生成像素风 SVG 插图，用于 README、文档或幻灯片 | 否 |
-| 📱 [`feishu-notify`](skills/feishu-notify/SKILL.md) | [飞书](#-飞书lark-集成可选)推送（webhook）或双向交互。默认关闭 | 否 |
+→ **[按 category 浏览全部 74 个 skill →](docs/SKILLS_CATALOG.md)**
 
 ---
 
@@ -1639,42 +1603,6 @@ claude
 > ```
 
 > ⚠️ **注意：** 替代模型的行为可能与 Claude 和 GPT-5.4 有所不同。你可能需要微调 prompt 模板以获得最佳效果。核心的跨模型架构不变。
-
-## 📋 Roadmap
-
-### 已完成
-
-- [x] **Human-in-the-loop 检查点** — idea-discovery 和 research-pipeline 在关键决策点暂停等待用户审批。通过 `AUTO_PROCEED` 配置（默认自动继续，设 `false` 则每步等确认）
-- [x] **替代模型组合** — [GLM + GPT、GLM + MiniMax](#-替代模型组合) 完整文档及配置指南。无需 Claude 或 OpenAI API
-- [x] **Workflow 3：论文写作流水线** — 完整链路：`/paper-plan` → `/paper-figure` → `/paper-write` → `/paper-compile`。支持 ICLR/NeurIPS/ICML 模板、claims-evidence 矩阵、出版级图表、latexmk 自动修复。参考 [claude-scholar](https://github.com/Galaxy-Dawn/claude-scholar)、[Research-Paper-Writing-Skills](https://github.com/Master-cai/Research-Paper-Writing-Skills)、[baoyu-skills](https://github.com/jimliu/baoyu-skills)
-
-<details>
-<summary>展开 6 项更早完成的功能</summary>
-
-- [x] **可配置 REVIEWER_MODEL** — 所有依赖 Codex 的 skill 支持自定义审稿模型（默认 `gpt-5.5`，也支持 `gpt-5.3-codex`、`gpt-5.2-codex`、`o3` 等）
-
-- [x] **本地论文库扫描** — `/research-lit` 在外部搜索前先扫描本地 `papers/` 和 `literature/` 目录，复用已读论文
-- [x] **Idea Discovery 流水线** — `/idea-discovery` 一键编排 research-lit → idea-creator → novelty-check → research-review，含 GPU pilot 实验
-- [x] **全流程研究管线** — `/research-pipeline` 串联 Workflow 1（idea discovery）→ 实现 → Workflow 2（auto-review-loop），端到端
-- [x] **Peer Review skill** — `/peer-review` 以审稿人视角审阅他人论文，含 GPT-5.4 meta-review（规划中；目前可用 `/research-review` + 论文 PDF 实现）
-- [x] **跨模型协作架构** — Claude Code（执行者）× Codex GPT-5.4 xhigh（审稿者），避免单模型自我博弈的局部最优
-- [x] **飞书集成** — 三种模式（关闭/推送/交互），通过 `~/.claude/feishu.json` 配置。推送只需 webhook URL；交互用 [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code)。默认关闭——对已有工作流零影响。见[设置指南](#-飞书lark-集成可选)
-- [x] **Zotero MCP 集成** — `/research-lit` 搜索 Zotero 文献库、读取标注/高亮、导出 BibTeX。推荐：[zotero-mcp](https://github.com/54yyyu/zotero-mcp)（1.8k⭐）。见[设置指南](#-zotero-集成可选)
-- [x] **Obsidian 集成** — `/research-lit` 搜索 Obsidian vault 中的研究笔记、标签引用、wikilinks。推荐：[mcpvault](https://github.com/bitbonsai/mcpvault)（760⭐）+ [obsidian-skills](https://github.com/kepano/obsidian-skills)（13.6k⭐）。见[设置指南](#-obsidian-集成可选)
-- [x] **更多执行者 × 评审者组合** — 任意 OpenAI 兼容 API 均可通过 [`llm-chat`](mcp-servers/llm-chat/) MCP 服务器接入
-- [x] **GitHub 代码同步** — `/run-experiment` 支持 `code_sync: git`（`git push` → `ssh "git pull"`）
-- [x] **W&B 集成** — `wandb: true` 时自动加 `wandb.init()` + `wandb.log()`，`/monitor-experiment` 拉训练曲线
-- [x] **ModelScope 集成** — [免费](docs/MODELSCOPE_GUIDE.md)（2000 次/天），一个 Key，双协议
-
-</details>
-
-### 计划中
-
-- [ ] **常驻模式（Daemon mode）** — 通过 `launchd`/`systemd` 自动重启 Claude Code 会话，实现真正的无人值守运行（[#11](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/11)）
-- [ ] **参考风格图表生成** — 参考论文 PDF 图表 → 识别配色/布局 → 生成同风格数据图表。方法示意图 ✅ 已由 `paper-illustration` 解决
-- [ ] **工作流执行报告** — 每个工作流完成后自动生成结构化总结：做了什么、关键决策、实验结果、评分和耗时。输出 `WORKFLOW_REPORT.md`，方便汇报
-- [ ] **文档输入全流程** — 支持传入详细文档（如 `RESEARCH_BRIEF.md`）作为 `/research-pipeline` 或 `/idea-discovery` 的输入，替代一句话 prompt。很多研究方向需要详细的上下文（前期结果、约束条件、领域知识），一句话说不清楚。文档会被解析提取问题定义、约束、已有结果和具体需求
-- [ ] **自动超参调优 skill** — 将 [auto-hparam-tuning](https://github.com/zxh0916/auto-hparam-tuning) 改写为 ARIS SKILL.md。5 步循环：理解项目 → 规划调优策略 → 跑实验 → 分析指标（TensorBoard/W&B）→ 学习迭代。接入工作流 1.5 或工作流 2
 
 ## 💬 交流群
 
