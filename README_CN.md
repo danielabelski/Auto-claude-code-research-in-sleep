@@ -228,86 +228,113 @@ claude
 > /meta-optimize                               # 元优化：分析使用记录 → 提出技能改进方案
 ```
 
-> 📚 **Research Wiki（可选）：** 给 ARIS 装上持久记忆。论文、idea、失败实验——什么都不忘：
-> ```bash
-> # 在 Claude Code 中：
-> > /research-wiki init                         # 创建 research-wiki/ 目录
-> # 搞定。此后 /research-lit 自动入库论文，/idea-creator 读 wiki 再想 idea
-> # （并把 idea 写回），/result-to-claim 更新 claim 状态。
-> # 失败的 idea 成为未来构思的防重复记忆。
-> ```
-> 详见 [Research Wiki](#-research-wiki--持久化研究记忆)。
+<details>
+<summary><b>📚 Research Wiki（可选）</b> —— 一行 init 启用跨 session 持久记忆；完整说明见 <a href="#-research-wiki--持久化研究记忆">§ Research Wiki</a></summary>
 
-> 🧬 **元优化（可选）：** 在**普通终端**（不是 Claude Code 会话内）运行以下命令启用被动日志：
-> ```bash
-> # 在项目目录下一次性设置
-> mkdir -p .claude .aris/meta tools/meta_opt
-> cp Auto-claude-code-research-in-sleep/templates/claude-hooks/meta_logging.json .claude/settings.json
-> cp Auto-claude-code-research-in-sleep/tools/meta_opt/*.sh tools/meta_opt/
-> chmod +x tools/meta_opt/*.sh
-> # 然后启动 Claude Code — hooks 立即生效
-> claude
-> ```
-> 事件同时记录到**项目级**（`.aris/meta/events.jsonl`）和**全局**（`~/.aris/meta/events.jsonl`）日志。累积 5 次以上工作流运行后，运行 `/meta-optimize` 查看改进建议。使用 `/meta-optimize --global` 分析跨项目的使用趋势。详见[工作流 M](#工作流-mmeta-optimize-aris-优化自己)。
+给 ARIS 装上持久记忆。论文、idea、失败实验——什么都不忘：
 
-> 📝 **模板可用！** 见 [`templates/`](templates/) 目录——每个工作流都有现成输入模板：[研究简报](templates/RESEARCH_BRIEF_TEMPLATE.md)（工作流 1）、[实验计划](templates/EXPERIMENT_PLAN_TEMPLATE.md)（工作流 1.5）、[研究叙事](templates/NARRATIVE_REPORT_TEMPLATE.md)（工作流 3）、[论文大纲](templates/PAPER_PLAN_TEMPLATE.md)（工作流 3）。
->
-> 🔎 **可选：DeepXiv 渐进式论文检索**
-> ```bash
-> pip install deepxiv-sdk
-> ```
-> 安装后可直接使用 [`/deepxiv`](skills/deepxiv/SKILL.md)，或在 `/research-lit` 中通过 `— sources: deepxiv` / `— sources: all, deepxiv` 显式启用。
->
-> 🔎 **可选：Exa AI 智能网页搜索**
-> ```bash
-> pip install exa-py
-> export EXA_API_KEY=your-key-here
-> ```
-> 安装后可直接使用 [`/exa-search`](skills/exa-search/SKILL.md)，或在 `/research-lit` 中通过 `— sources: exa` / `— sources: all, exa` 显式启用。覆盖博客、文档、新闻和研究论文，并内置内容提取。
->
-> 🗑️ **卸载：** 仅删除 ARIS skills，不影响你自己的 skills：
-> ```bash
-> cd Auto-claude-code-research-in-sleep && ls skills/ | xargs -I{} rm -rf ~/.claude/skills/{}
-> ```
+```bash
+# 在 Claude Code 中：
+> /research-wiki init                         # 创建 research-wiki/ 目录
+# 搞定。此后 /research-lit 自动入库论文，/idea-creator 读 wiki 再想 idea
+# （并把 idea 写回），/result-to-claim 更新 claim 状态。
+# 失败的 idea 成为未来构思的防重复记忆。
+```
 
-> **提示：** 所有流水线行为均可通过内联参数配置——在命令后追加 `— key: value`：
->
-> | 参数 | 默认 | 说明 |
-> |------|------|------|
-> | `AUTO_PROCEED` | `true` | 在 idea 选择关卡自动继续。设为 `false` 可在花 GPU 前手动挑选 idea |
-> | `human checkpoint` | `false` | 每轮 review 后暂停，让你查看分数、给出修改意见、跳过特定修复或提前终止 |
-> | `sources` | `all` | 搜索哪些文献源：`zotero`、`obsidian`、`local`、`web`、`semantic-scholar`、`deepxiv`、`exa`、`all`。`semantic-scholar`、`deepxiv` 和 `exa` 都需显式指定 |
-> | `arxiv download` | `false` | 文献调研时下载最相关的 arXiv PDF。为 `false` 时仅获取元数据（标题、摘要、作者） |
-> | `DBLP_BIBTEX` | `true` | 从 [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) 获取真实 BibTeX，替代 LLM 生成。杜绝幻觉引用。零安装 |
-> | `code review` | `true` | GPT-5.4 xhigh 部署前审查实验代码。设 `false` 跳过 |
-> | `wandb` | `false` | 自动给实验脚本加 W&B 日志。设 `true` + 在 CLAUDE.md 配 `wandb_project`。`/monitor-experiment` 从 W&B 拉训练曲线 |
-> | `illustration` | `gemini` | 工作流 3 AI 作图：`gemini`（默认，需 `GEMINI_API_KEY`，[获取](https://aistudio.google.com/apikey)）、`mermaid`（免费）、`false`（跳过） |
-> | `venue` | `ICLR` | 目标会议：`ICLR`、`NeurIPS`、`ICML`、`CVPR`、`ACL`、`AAAI`、`ACM`、`IEEE_JOURNAL`、`IEEE_CONF`。决定 LaTeX 样式和页数限制 |
-> | `base repo` | `false` | GitHub 仓库 URL，克隆作为实验基础代码（如 `— base repo: https://github.com/org/project`）。没有代码？基于开源项目开发 |
-> | `compact` | `false` | 生成精简摘要文件（`IDEA_CANDIDATES.md`、`findings.md`、`EXPERIMENT_LOG.md`），适合短 context 模型和 session 恢复 |
-> | `ref paper` | `false` | 参考论文（PDF 路径或 arXiv URL）。先总结论文，再基于它找 idea。配合 `base repo` 实现"论文+代码"工作流 |
-> | `effort` | `balanced` | 工作强度：`lite`(0.4x)、`balanced`(默认)、`max`(2.5x)、`beast`(5-8x)。Codex reasoning 永远 `xhigh` |
-> | `reviewer` | `codex` | 审稿后端：`codex`（GPT-5.4 xhigh，默认）、`oracle-pro`（GPT-5.4 Pro via [Oracle](https://github.com/steipete/oracle)） |
-> | `difficulty` | `medium` | 审稿对抗强度：`medium`（默认）、`hard`（+ memory + 辩论）、`nightmare`（+ GPT 通过 `codex exec` 直读仓库） |
->
-> ```
-> /research-pipeline "你的课题" — AUTO_PROCEED: false                          # 在 idea 选择关卡暂停
-> /research-pipeline "你的课题" — human checkpoint: true                       # 每轮 review 后暂停，可给修改意见
-> /research-pipeline "你的课题" — sources: zotero, web                         # 只搜 Zotero + 网络（跳过本地 PDF）
-> /research-pipeline "你的课题" — sources: all, deepxiv                        # 默认源 + DeepXiv 渐进式检索
-> /research-pipeline "你的课题" — sources: all, exa                            # 默认源 + Exa AI 智能网页搜索
-> /research-pipeline "你的课题" — arxiv download: true                         # 文献调研时下载最相关的 arXiv PDF
-> /research-pipeline "你的课题" — difficulty: nightmare                        # 投顶会前极限压测
-> /research-pipeline "你的课题" — AUTO_PROCEED: false, human checkpoint: true  # 组合使用
-> ```
+</details>
 
-> **重要：** Codex MCP 使用的模型取决于 `~/.codex/config.toml`，而非 skill 文件中的设置。请确认其中写的是 `model = "gpt-5.5"`（推荐）。其他可用模型：`gpt-5.3-codex`、`gpt-5.2-codex`、`o3`。运行 `codex setup` 或直接编辑该文件。
+<details>
+<summary><b>🧬 元优化（可选）</b> —— 被动使用日志 + /meta-optimize 出数据驱动的 SKILL.md 改进建议；完整说明见 <a href="#工作流-mmeta-optimize-aris-优化自己">§ 工作流 M</a></summary>
 
-> **想让 Codex 执行、Claude Code 审稿？** 见 [`docs/CODEX_CLAUDE_REVIEW_GUIDE_CN.md`](docs/CODEX_CLAUDE_REVIEW_GUIDE_CN.md)。这条路径会先安装基础 `skills/skills-codex/*`，再叠加 `skills/skills-codex-claude-review/*`，并通过本地 `claude-review` MCP bridge 转发 review-heavy skill 的审稿请求。
+在**普通终端**（不是 Claude Code 会话内）运行以下命令启用被动日志：
 
-> **想让 Codex 执行、Gemini 在本地做审稿？** 见 [`docs/CODEX_GEMINI_REVIEW_GUIDE_CN.md`](docs/CODEX_GEMINI_REVIEW_GUIDE_CN.md) 和[英文版](docs/CODEX_GEMINI_REVIEW_GUIDE.md)。这条路径会先安装基础 `skills/skills-codex/*`，再叠加 `skills/skills-codex-gemini-review/*`，并通过本地 `gemini-review` MCP bridge 转发 reviewer-aware 预定义 skills 的审稿请求，默认 direct Gemini API。
+```bash
+# 在项目目录下一次性设置
+mkdir -p .claude .aris/meta tools/meta_opt
+cp Auto-claude-code-research-in-sleep/templates/claude-hooks/meta_logging.json .claude/settings.json
+cp Auto-claude-code-research-in-sleep/tools/meta_opt/*.sh tools/meta_opt/
+chmod +x tools/meta_opt/*.sh
+# 然后启动 Claude Code — hooks 立即生效
+claude
+```
 
-> **想走 Codex mirror 安装链？** 项目级受管安装用 `tools/install_aris_codex.sh`，copy 安装更新用 `tools/smart_update_codex.sh`。Claude 脚本仍然是 Claude 主线入口。
+事件同时记录到**项目级**（`.aris/meta/events.jsonl`）和**全局**（`~/.aris/meta/events.jsonl`）日志。累积 5 次以上工作流运行后，运行 `/meta-optimize` 查看改进建议。使用 `/meta-optimize --global` 分析跨项目的使用趋势。
+
+</details>
+
+<details>
+<summary><b>📝 模板 + 🔎 DeepXiv + 🔎 Exa + 🗑️ 卸载</b> —— 输入模板、两个额外文献源、以及卸载命令</summary>
+
+**📝 模板可用！** 见 [`templates/`](templates/) 目录——每个工作流都有现成输入模板：[研究简报](templates/RESEARCH_BRIEF_TEMPLATE.md)（工作流 1）、[实验计划](templates/EXPERIMENT_PLAN_TEMPLATE.md)（工作流 1.5）、[研究叙事](templates/NARRATIVE_REPORT_TEMPLATE.md)（工作流 3）、[论文大纲](templates/PAPER_PLAN_TEMPLATE.md)（工作流 3）。
+
+**🔎 可选：DeepXiv 渐进式论文检索**
+```bash
+pip install deepxiv-sdk
+```
+安装后可直接使用 [`/deepxiv`](skills/deepxiv/SKILL.md)，或在 `/research-lit` 中通过 `— sources: deepxiv` / `— sources: all, deepxiv` 显式启用。
+
+**🔎 可选：Exa AI 智能网页搜索**
+```bash
+pip install exa-py
+export EXA_API_KEY=your-key-here
+```
+安装后可直接使用 [`/exa-search`](skills/exa-search/SKILL.md)，或在 `/research-lit` 中通过 `— sources: exa` / `— sources: all, exa` 显式启用。覆盖博客、文档、新闻和研究论文，并内置内容提取。
+
+**🗑️ 卸载：** 仅删除 ARIS skills，不影响你自己的 skills：
+```bash
+cd Auto-claude-code-research-in-sleep && ls skills/ | xargs -I{} rm -rf ~/.claude/skills/{}
+```
+
+</details>
+
+<details>
+<summary><b>展开全部 15 个内联参数和 8 个 override 示例</b> —— AUTO_PROCEED / sources / arxiv download / DBLP_BIBTEX / code review / wandb / illustration / venue / base repo / compact / ref paper / effort / reviewer / difficulty（完整 per-skill 默认值见 <a href="#%EF%B8%8F-自定义">§ 自定义</a>）</summary>
+
+所有流水线行为均可通过内联参数配置——在命令后追加 `— key: value`：
+
+| 参数 | 默认 | 说明 |
+|------|------|------|
+| `AUTO_PROCEED` | `true` | 在 idea 选择关卡自动继续。设为 `false` 可在花 GPU 前手动挑选 idea |
+| `human checkpoint` | `false` | 每轮 review 后暂停，让你查看分数、给出修改意见、跳过特定修复或提前终止 |
+| `sources` | `all` | 搜索哪些文献源：`zotero`、`obsidian`、`local`、`web`、`semantic-scholar`、`deepxiv`、`exa`、`all`。`semantic-scholar`、`deepxiv` 和 `exa` 都需显式指定 |
+| `arxiv download` | `false` | 文献调研时下载最相关的 arXiv PDF。为 `false` 时仅获取元数据（标题、摘要、作者） |
+| `DBLP_BIBTEX` | `true` | 从 [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) 获取真实 BibTeX，替代 LLM 生成。杜绝幻觉引用。零安装 |
+| `code review` | `true` | GPT-5.4 xhigh 部署前审查实验代码。设 `false` 跳过 |
+| `wandb` | `false` | 自动给实验脚本加 W&B 日志。设 `true` + 在 CLAUDE.md 配 `wandb_project`。`/monitor-experiment` 从 W&B 拉训练曲线 |
+| `illustration` | `gemini` | 工作流 3 AI 作图：`gemini`（默认，需 `GEMINI_API_KEY`，[获取](https://aistudio.google.com/apikey)）、`mermaid`（免费）、`false`（跳过） |
+| `venue` | `ICLR` | 目标会议：`ICLR`、`NeurIPS`、`ICML`、`CVPR`、`ACL`、`AAAI`、`ACM`、`IEEE_JOURNAL`、`IEEE_CONF`。决定 LaTeX 样式和页数限制 |
+| `base repo` | `false` | GitHub 仓库 URL，克隆作为实验基础代码（如 `— base repo: https://github.com/org/project`）。没有代码？基于开源项目开发 |
+| `compact` | `false` | 生成精简摘要文件（`IDEA_CANDIDATES.md`、`findings.md`、`EXPERIMENT_LOG.md`），适合短 context 模型和 session 恢复 |
+| `ref paper` | `false` | 参考论文（PDF 路径或 arXiv URL）。先总结论文，再基于它找 idea。配合 `base repo` 实现"论文+代码"工作流 |
+| `effort` | `balanced` | 工作强度：`lite`(0.4x)、`balanced`(默认)、`max`(2.5x)、`beast`(5-8x)。Codex reasoning 永远 `xhigh` |
+| `reviewer` | `codex` | 审稿后端：`codex`（GPT-5.4 xhigh，默认）、`oracle-pro`（GPT-5.4 Pro via [Oracle](https://github.com/steipete/oracle)） |
+| `difficulty` | `medium` | 审稿对抗强度：`medium`（默认）、`hard`（+ memory + 辩论）、`nightmare`（+ GPT 通过 `codex exec` 直读仓库） |
+
+```
+/research-pipeline "你的课题" — AUTO_PROCEED: false                          # 在 idea 选择关卡暂停
+/research-pipeline "你的课题" — human checkpoint: true                       # 每轮 review 后暂停，可给修改意见
+/research-pipeline "你的课题" — sources: zotero, web                         # 只搜 Zotero + 网络（跳过本地 PDF）
+/research-pipeline "你的课题" — sources: all, deepxiv                        # 默认源 + DeepXiv 渐进式检索
+/research-pipeline "你的课题" — sources: all, exa                            # 默认源 + Exa AI 智能网页搜索
+/research-pipeline "你的课题" — arxiv download: true                         # 文献调研时下载最相关的 arXiv PDF
+/research-pipeline "你的课题" — difficulty: nightmare                        # 投顶会前极限压测
+/research-pipeline "你的课题" — AUTO_PROCEED: false, human checkpoint: true  # 组合使用
+```
+
+</details>
+
+<details>
+<summary><b>Codex MCP 配置 + 替代 reviewer 路由</b> —— 在 <code>~/.codex/config.toml</code> 钉模型；Codex+Claude 审稿、Codex+Gemini 审稿、Codex mirror 安装链的入口指向</summary>
+
+**重要：** Codex MCP 使用的模型取决于 `~/.codex/config.toml`，而非 skill 文件中的设置。请确认其中写的是 `model = "gpt-5.5"`（推荐）。其他可用模型：`gpt-5.3-codex`、`gpt-5.2-codex`、`o3`。运行 `codex setup` 或直接编辑该文件。
+
+**想让 Codex 执行、Claude Code 审稿？** 见 [`docs/CODEX_CLAUDE_REVIEW_GUIDE_CN.md`](docs/CODEX_CLAUDE_REVIEW_GUIDE_CN.md)。这条路径会先安装基础 `skills/skills-codex/*`，再叠加 `skills/skills-codex-claude-review/*`，并通过本地 `claude-review` MCP bridge 转发 review-heavy skill 的审稿请求。
+
+**想让 Codex 执行、Gemini 在本地做审稿？** 见 [`docs/CODEX_GEMINI_REVIEW_GUIDE_CN.md`](docs/CODEX_GEMINI_REVIEW_GUIDE_CN.md) 和[英文版](docs/CODEX_GEMINI_REVIEW_GUIDE.md)。这条路径会先安装基础 `skills/skills-codex/*`，再叠加 `skills/skills-codex-gemini-review/*`，并通过本地 `gemini-review` MCP bridge 转发 reviewer-aware 预定义 skills 的审稿请求，默认 direct Gemini API。
+
+**想走 Codex mirror 安装链？** 项目级受管安装用 `tools/install_aris_codex.sh`，copy 安装更新用 `tools/smart_update_codex.sh`。Claude 脚本仍然是 Claude 主线入口。
+
+</details>
 
 详见[完整安装指南](#%EF%B8%8F-安装)和[替代模型组合](#-替代模型组合)（无需 Claude/OpenAI API）。
 

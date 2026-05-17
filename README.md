@@ -264,103 +264,135 @@ claude
 > /meta-optimize                                # Meta: analyze usage logs → propose skill improvements
 ```
 
-> 📚 **Research Wiki (optional):** Give ARIS persistent memory across sessions. Papers, ideas, failed experiments — nothing is forgotten:
-> ```bash
-> # In Claude Code:
-> > /research-wiki init                         # creates research-wiki/ in your project
-> # That's it. From now on, /research-lit auto-ingests papers, /idea-creator reads
-> # the wiki before brainstorming (and writes ideas back), /result-to-claim updates
-> # claim status. Failed ideas become anti-repetition memory for future ideation.
-> ```
-> See [Research Wiki](#-research-wiki--persistent-research-memory) for the full guide.
+<details>
+<summary><b>📚 Research Wiki (optional)</b> — one-line init for persistent memory across sessions; see <a href="#-research-wiki--persistent-research-memory">full Research Wiki section</a></summary>
 
-> 🧬 **Meta-optimization (optional):** Run these in your **normal terminal** (not inside Claude Code) to enable passive usage logging:
-> ```bash
-> # One-time setup in your project directory
-> mkdir -p .claude .aris/meta tools/meta_opt
-> cp Auto-claude-code-research-in-sleep/templates/claude-hooks/meta_logging.json .claude/settings.json
-> cp Auto-claude-code-research-in-sleep/tools/meta_opt/*.sh tools/meta_opt/
-> chmod +x tools/meta_opt/*.sh
-> # Then start Claude Code — hooks are active immediately
-> claude
-> ```
-> Events are logged to **both** project-level (`.aris/meta/events.jsonl`) and global (`~/.aris/meta/events.jsonl`) logs. After 5+ workflow runs, run `/meta-optimize` to see data-driven improvement proposals. Use `/meta-optimize --global` to analyze trends across all your projects. See [Workflow M](#workflow-m-meta-optimize--aris-optimizes-itself) for details.
+Give ARIS persistent memory across sessions. Papers, ideas, failed experiments — nothing is forgotten:
 
-> 📝 **Templates available!** See [`templates/`](templates/) for ready-to-use input templates for every workflow — [research brief](templates/RESEARCH_BRIEF_TEMPLATE.md) (Workflow 1), [experiment plan](templates/EXPERIMENT_PLAN_TEMPLATE.md) (Workflow 1.5), [narrative report](templates/NARRATIVE_REPORT_TEMPLATE.md) (Workflow 3), [paper plan](templates/PAPER_PLAN_TEMPLATE.md) (Workflow 3).
->
-> 🔎 **Optional: DeepXiv progressive retrieval**
-> ```bash
-> pip install deepxiv-sdk
-> ```
-> Then use [`/deepxiv`](skills/deepxiv/SKILL.md) directly or opt into it from `/research-lit` with `— sources: deepxiv` or `— sources: all, deepxiv`.
->
-> 🔎 **Optional: Exa AI-powered web search**
-> ```bash
-> pip install exa-py
-> export EXA_API_KEY=your-key-here
-> ```
-> Then use [`/exa-search`](skills/exa-search/SKILL.md) directly or opt into it from `/research-lit` with `— sources: exa` or `— sources: all, exa`. Covers blogs, docs, news, and research papers with built-in content extraction.
->
-> 🗑️ **Uninstall:** To remove ARIS skills without affecting your own personal skills:
-> ```bash
-> cd Auto-claude-code-research-in-sleep && ls skills/ | xargs -I{} rm -rf ~/.claude/skills/{}
-> ```
+```bash
+# In Claude Code:
+> /research-wiki init                         # creates research-wiki/ in your project
+# That's it. From now on, /research-lit auto-ingests papers, /idea-creator reads
+# the wiki before brainstorming (and writes ideas back), /result-to-claim updates
+# claim status. Failed ideas become anti-repetition memory for future ideation.
+```
 
-> **Tip:** All pipeline behaviors are configurable via inline overrides — append `— key: value` to any command:
->
-> | Parameter | Default | What it does |
-> |-----------|---------|-------------|
-> | `AUTO_PROCEED` | `true` | Auto-continue at idea selection gate. Set `false` to manually pick which idea to pursue before committing GPU time |
-> | `human checkpoint` | `false` | Pause after each review round so you can read the score, give custom modification instructions, skip specific fixes, or stop early |
-> | `sources` | `all` | Which literature sources to search: `zotero`, `obsidian`, `local`, `web`, `semantic-scholar`, `deepxiv`, `exa`, or `all`. Note: `semantic-scholar`, `deepxiv`, and `exa` must be explicitly listed — not included in `all` |
-> | `arxiv download` | `false` | Download top relevant arXiv PDFs during literature survey. When `false`, only fetches metadata (title, abstract, authors) |
-> | `DBLP_BIBTEX` | `true` | Fetch real BibTeX from [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) instead of LLM-generated entries. Eliminates hallucinated citations. Zero install |
-> | `code review` | `true` | GPT-5.4 xhigh reviews experiment code before GPU deployment. Set `false` to skip |
-> | `wandb` | `false` | Auto-add W&B logging to experiment scripts. Set `true` + configure `wandb_project` in CLAUDE.md. `/monitor-experiment` pulls training curves from W&B |
-> | `illustration` | `gemini` | AI illustration in Workflow 3: `gemini` (default, needs `GEMINI_API_KEY`), `mermaid` (free), or `false` (skip) |
-> | `venue` | `ICLR` | Target venue: `ICLR`, `NeurIPS`, `ICML`, `CVPR`, `ACL`, `AAAI`, `ACM`. Determines LaTeX style file and page limit |
-> | `base repo` | `false` | GitHub repo URL to clone as base codebase (e.g., `— base repo: https://github.com/org/project`). No code? Build on top of an open-source project |
-> | `gpu` | `local` | GPU target: `local` (default), `remote` (SSH server), or `vast` (rent on-demand from [Vast.ai](https://vast.ai) — auto-provision, auto-destroy) |
-> | `compact` | `false` | Generate compact summary files (`IDEA_CANDIDATES.md`, `findings.md`, `EXPERIMENT_LOG.md`) for short-context models and session recovery |
-> | `ref paper` | `false` | Reference paper to build on (PDF path or arXiv URL). Summarized first, then ideas extend/improve it. Combine with `base repo` for paper+code workflows |
-> | `effort` | `balanced` | Work intensity: `lite` (0.4x tokens), `balanced` (default), `max` (2.5x), `beast` (5-8x). Controls breadth/depth/iterations. Codex reasoning always `xhigh`. See [Effort Levels](#-effort-levels) |
-> | `reviewer` | `codex` | Reviewer backend: `codex` (GPT-5.4 xhigh, default), `oracle-pro` (GPT-5.4 Pro via [Oracle](https://github.com/steipete/oracle) — strongest reasoning). See [Setup →](#-optional-gpt-54-pro-via-oracle) |
-> | `difficulty` | `medium` | Reviewer adversarial level: `medium` (default), `hard` (+ memory + debate), `nightmare` (+ GPT reads repo via `codex exec`) |
->
-> ```
-> /research-pipeline "your topic" — AUTO_PROCEED: false                          # pause at idea selection gate
-> /research-pipeline "your topic" — human checkpoint: true                       # pause after each review round to give feedback
-> /research-pipeline "your topic" — sources: zotero, web                         # only search Zotero + web (skip local PDFs)
-> /research-pipeline "your topic" — sources: all, deepxiv                        # default sources plus DeepXiv progressive retrieval
-> /research-pipeline "your topic" — sources: all, exa                            # default sources plus Exa AI-powered web search
-> /research-pipeline "your topic" — arxiv download: true                         # download top arXiv PDFs during literature survey
-> /research-pipeline "your topic" — difficulty: nightmare                        # maximum adversarial review before submission
-> /research-pipeline "your topic" — effort: beast                               # all knobs to maximum — top-venue sprint
-> /research-pipeline "your topic" — effort: beast, reviewer: oracle-pro         # beast + GPT-5.4 Pro reviewer — ultimate mode
-> /research-pipeline "your topic" — effort: lite                                # quick exploration, save tokens
-> /research-pipeline "your topic" — effort: max, review_rounds: 3               # max effort but cap review at 3 rounds
-> /research-pipeline "your topic" — AUTO_PROCEED: false, human checkpoint: true  # combine options
-> /proof-checker "paper/" — reviewer: oracle-pro                                # Pro-level proof verification
-> ```
+</details>
 
-> **Important:** Codex MCP uses the model from `~/.codex/config.toml`, not from skill files. Make sure it says `model = "gpt-5.5"` (recommended). Other options: `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`. Run `codex setup` or edit the file directly.
+<details>
+<summary><b>🧬 Meta-Optimization (optional)</b> — passive usage logging + /meta-optimize for data-driven SKILL.md improvements; see <a href="#workflow-m-meta-optimize--aris-optimizes-itself">full Workflow M section</a></summary>
 
-> **Want Codex to execute but Claude Code to review?** See [`docs/CODEX_CLAUDE_REVIEW_GUIDE.md`](docs/CODEX_CLAUDE_REVIEW_GUIDE.md). That path installs the base `skills/skills-codex/*`, then overlays `skills/skills-codex-claude-review/*`, and routes review-heavy skills through the local `claude-review` MCP bridge.
+Run these in your **normal terminal** (not inside Claude Code) to enable passive usage logging:
 
-> **Want Codex to execute but Gemini to review locally?** See [`docs/CODEX_GEMINI_REVIEW_GUIDE.md`](docs/CODEX_GEMINI_REVIEW_GUIDE.md) and [CN](docs/CODEX_GEMINI_REVIEW_GUIDE_CN.md). That path installs the base `skills/skills-codex/*`, then overlays `skills/skills-codex-gemini-review/*`, and routes the reviewer-aware predefined skills through the local `gemini-review` MCP bridge using direct Gemini API by default.
+```bash
+# One-time setup in your project directory
+mkdir -p .claude .aris/meta tools/meta_opt
+cp Auto-claude-code-research-in-sleep/templates/claude-hooks/meta_logging.json .claude/settings.json
+cp Auto-claude-code-research-in-sleep/tools/meta_opt/*.sh tools/meta_opt/
+chmod +x tools/meta_opt/*.sh
+# Then start Claude Code — hooks are active immediately
+claude
+```
 
-> **Want the Codex mirror install chain?** Use `tools/install_aris_codex.sh` for managed project installs and `tools/smart_update_codex.sh` for copied Codex installs. The Claude scripts remain the mainline entry points for Claude projects.
+Events are logged to **both** project-level (`.aris/meta/events.jsonl`) and global (`~/.aris/meta/events.jsonl`) logs. After 5+ workflow runs, run `/meta-optimize` to see data-driven improvement proposals. Use `/meta-optimize --global` to analyze trends across all your projects.
+
+</details>
+
+<details>
+<summary><b>📝 Templates + 🔎 DeepXiv + 🔎 Exa + 🗑️ Uninstall</b> — input templates, two extra literature sources, and the uninstall command</summary>
+
+**📝 Templates available!** See [`templates/`](templates/) for ready-to-use input templates for every workflow — [research brief](templates/RESEARCH_BRIEF_TEMPLATE.md) (Workflow 1), [experiment plan](templates/EXPERIMENT_PLAN_TEMPLATE.md) (Workflow 1.5), [narrative report](templates/NARRATIVE_REPORT_TEMPLATE.md) (Workflow 3), [paper plan](templates/PAPER_PLAN_TEMPLATE.md) (Workflow 3).
+
+**🔎 Optional: DeepXiv progressive retrieval**
+```bash
+pip install deepxiv-sdk
+```
+Then use [`/deepxiv`](skills/deepxiv/SKILL.md) directly or opt into it from `/research-lit` with `— sources: deepxiv` or `— sources: all, deepxiv`.
+
+**🔎 Optional: Exa AI-powered web search**
+```bash
+pip install exa-py
+export EXA_API_KEY=your-key-here
+```
+Then use [`/exa-search`](skills/exa-search/SKILL.md) directly or opt into it from `/research-lit` with `— sources: exa` or `— sources: all, exa`. Covers blogs, docs, news, and research papers with built-in content extraction.
+
+**🗑️ Uninstall:** To remove ARIS skills without affecting your own personal skills:
+```bash
+cd Auto-claude-code-research-in-sleep && ls skills/ | xargs -I{} rm -rf ~/.claude/skills/{}
+```
+
+</details>
+
+<details>
+<summary><b>Show all 16 inline parameters and 12 override examples</b> — AUTO_PROCEED / sources / arxiv download / DBLP_BIBTEX / code review / wandb / illustration / venue / base repo / gpu / compact / ref paper / effort / reviewer / difficulty (full per-skill defaults live in <a href="#%EF%B8%8F-customization">§ Customization</a>)</summary>
+
+All pipeline behaviors are configurable via inline overrides — append `— key: value` to any command:
+
+| Parameter | Default | What it does |
+|-----------|---------|-------------|
+| `AUTO_PROCEED` | `true` | Auto-continue at idea selection gate. Set `false` to manually pick which idea to pursue before committing GPU time |
+| `human checkpoint` | `false` | Pause after each review round so you can read the score, give custom modification instructions, skip specific fixes, or stop early |
+| `sources` | `all` | Which literature sources to search: `zotero`, `obsidian`, `local`, `web`, `semantic-scholar`, `deepxiv`, `exa`, or `all`. Note: `semantic-scholar`, `deepxiv`, and `exa` must be explicitly listed — not included in `all` |
+| `arxiv download` | `false` | Download top relevant arXiv PDFs during literature survey. When `false`, only fetches metadata (title, abstract, authors) |
+| `DBLP_BIBTEX` | `true` | Fetch real BibTeX from [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) instead of LLM-generated entries. Eliminates hallucinated citations. Zero install |
+| `code review` | `true` | GPT-5.4 xhigh reviews experiment code before GPU deployment. Set `false` to skip |
+| `wandb` | `false` | Auto-add W&B logging to experiment scripts. Set `true` + configure `wandb_project` in CLAUDE.md. `/monitor-experiment` pulls training curves from W&B |
+| `illustration` | `gemini` | AI illustration in Workflow 3: `gemini` (default, needs `GEMINI_API_KEY`), `mermaid` (free), or `false` (skip) |
+| `venue` | `ICLR` | Target venue: `ICLR`, `NeurIPS`, `ICML`, `CVPR`, `ACL`, `AAAI`, `ACM`. Determines LaTeX style file and page limit |
+| `base repo` | `false` | GitHub repo URL to clone as base codebase (e.g., `— base repo: https://github.com/org/project`). No code? Build on top of an open-source project |
+| `gpu` | `local` | GPU target: `local` (default), `remote` (SSH server), or `vast` (rent on-demand from [Vast.ai](https://vast.ai) — auto-provision, auto-destroy) |
+| `compact` | `false` | Generate compact summary files (`IDEA_CANDIDATES.md`, `findings.md`, `EXPERIMENT_LOG.md`) for short-context models and session recovery |
+| `ref paper` | `false` | Reference paper to build on (PDF path or arXiv URL). Summarized first, then ideas extend/improve it. Combine with `base repo` for paper+code workflows |
+| `effort` | `balanced` | Work intensity: `lite` (0.4x tokens), `balanced` (default), `max` (2.5x), `beast` (5-8x). Controls breadth/depth/iterations. Codex reasoning always `xhigh`. See [Effort Levels](#-effort-levels) |
+| `reviewer` | `codex` | Reviewer backend: `codex` (GPT-5.4 xhigh, default), `oracle-pro` (GPT-5.4 Pro via [Oracle](https://github.com/steipete/oracle) — strongest reasoning). See [Setup →](#-optional-gpt-54-pro-via-oracle) |
+| `difficulty` | `medium` | Reviewer adversarial level: `medium` (default), `hard` (+ memory + debate), `nightmare` (+ GPT reads repo via `codex exec`) |
+
+```
+/research-pipeline "your topic" — AUTO_PROCEED: false                          # pause at idea selection gate
+/research-pipeline "your topic" — human checkpoint: true                       # pause after each review round to give feedback
+/research-pipeline "your topic" — sources: zotero, web                         # only search Zotero + web (skip local PDFs)
+/research-pipeline "your topic" — sources: all, deepxiv                        # default sources plus DeepXiv progressive retrieval
+/research-pipeline "your topic" — sources: all, exa                            # default sources plus Exa AI-powered web search
+/research-pipeline "your topic" — arxiv download: true                         # download top arXiv PDFs during literature survey
+/research-pipeline "your topic" — difficulty: nightmare                        # maximum adversarial review before submission
+/research-pipeline "your topic" — effort: beast                               # all knobs to maximum — top-venue sprint
+/research-pipeline "your topic" — effort: beast, reviewer: oracle-pro         # beast + GPT-5.4 Pro reviewer — ultimate mode
+/research-pipeline "your topic" — effort: lite                                # quick exploration, save tokens
+/research-pipeline "your topic" — effort: max, review_rounds: 3               # max effort but cap review at 3 rounds
+/research-pipeline "your topic" — AUTO_PROCEED: false, human checkpoint: true  # combine options
+/proof-checker "paper/" — reviewer: oracle-pro                                # Pro-level proof verification
+```
+
+</details>
+
+<details>
+<summary><b>Codex MCP config + alternative reviewer routing</b> — pin the model in <code>~/.codex/config.toml</code>; pointers to Codex+Claude-review, Codex+Gemini-review, and the Codex mirror install chain</summary>
+
+**Important:** Codex MCP uses the model from `~/.codex/config.toml`, not from skill files. Make sure it says `model = "gpt-5.5"` (recommended). Other options: `gpt-5.3-codex`, `gpt-5.2-codex`, `o3`. Run `codex setup` or edit the file directly.
+
+**Want Codex to execute but Claude Code to review?** See [`docs/CODEX_CLAUDE_REVIEW_GUIDE.md`](docs/CODEX_CLAUDE_REVIEW_GUIDE.md). That path installs the base `skills/skills-codex/*`, then overlays `skills/skills-codex-claude-review/*`, and routes review-heavy skills through the local `claude-review` MCP bridge.
+
+**Want Codex to execute but Gemini to review locally?** See [`docs/CODEX_GEMINI_REVIEW_GUIDE.md`](docs/CODEX_GEMINI_REVIEW_GUIDE.md) and [CN](docs/CODEX_GEMINI_REVIEW_GUIDE_CN.md). That path installs the base `skills/skills-codex/*`, then overlays `skills/skills-codex-gemini-review/*`, and routes the reviewer-aware predefined skills through the local `gemini-review` MCP bridge using direct Gemini API by default.
+
+**Want the Codex mirror install chain?** Use `tools/install_aris_codex.sh` for managed project installs and `tools/smart_update_codex.sh` for copied Codex installs. The Claude scripts remain the mainline entry points for Claude projects.
+
+</details>
 
 See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model combinations](#-alternative-model-combinations) if you don't have Claude/OpenAI API.
 
-> 🧠 **Update skills later?** Smart update analyzes what's safe:
-> ```bash
-> cd Auto-claude-code-research-in-sleep
-> git pull
-> bash tools/smart_update.sh          # dry-run: shows what's new/changed/safe
-> bash tools/smart_update.sh --apply  # apply: adds new + updates safe ones
-> ```
-> Compares local skills with upstream, detects personal customizations (server paths, API keys, etc.), and only updates skills that are safe to replace. Skills with your personal info are flagged for manual review.
+<details>
+<summary><b>🧠 Smart-update workflow</b> — git pull + dry-run + apply; detects personal customizations and only updates safe skills</summary>
+
+```bash
+cd Auto-claude-code-research-in-sleep
+git pull
+bash tools/smart_update.sh          # dry-run: shows what's new/changed/safe
+bash tools/smart_update.sh --apply  # apply: adds new + updates safe ones
+```
+
+Compares local skills with upstream, detects personal customizations (server paths, API keys, etc.), and only updates skills that are safe to replace. Skills with your personal info are flagged for manual review.
+
+</details>
 
 ## ✨ Features
 
