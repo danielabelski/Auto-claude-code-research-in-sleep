@@ -132,16 +132,6 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 
 > *💡 From idea to paper to podium — one toolchain. 🌱*
 
-## 🏆 Community Submissions Built with ARIS
-
-| Paper | AI-review signal | Status | Author | Stack |
-|-------|:----------------:|--------|--------|-------|
-| **CS Paper Submission** | [CSPaper](https://cspaper.org/) simulated review: **8/10**; AI reviewer recommendation: "clear accept" | Submitted to a CS conference; awaiting official feedback | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Claude Code + GPT-5.4 |
-| **AAAI 2026 Paper Submission** | [Stanford Agentic Reviewer](https://paperreview.ai/) AAAI-style review: **7/10**; AI reviewer recommendation: "good paper, accept" | Submitted to AAAI 2026 Main Technical; awaiting official decision | [@xinbo820-web](https://github.com/xinbo820-web) | Pure Codex CLI |
-| UAV-CC | Under review | Submitted to IEEE TGRS | [@wxx827](https://github.com/wxx827) | Claude Opus 4.6 + Codex 5.4 xhigh + Cursor |
-
-> Built with ARIS — from idea to submission. AI-review scores are community-reported signals from simulated/third-party review tools, not official peer-review or acceptance results. Because ARIS explicitly iterates against AI reviewers, higher AI-review scores are expected and should be read as stress-test feedback; human reviewers may bring newer perspectives, venue taste, and concerns not captured by those systems. [Full details + review screenshots →](#-community-showcase--papers-built-with-aris)
-
 ## 📢 What's New
 
 - **2026-05-17** — ![FIX](https://img.shields.io/badge/FIX-orange?style=flat-square) 🛠 **Tools-stability roadmap (Phase 1+2+3) complete** (closes [#176](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/176) / [#177](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/177) / [#178](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/178)). Community reported that helper scripts weren't propagating into user projects after `install_aris.sh`. **Phase 1** — every SKILL.md caller of the 10 canonical helpers now resolves via the strict-safe 3-layer chain `.aris/tools/` → `tools/` → `$ARIS_REPO/tools/` documented in [`integration-contract.md`](skills/shared-references/integration-contract.md) §2 (which also defines 5 failure policies A/B/C/D1/D2/E). **Phase 2** — new [advisory CI lint](.github/workflows/lint-skills-helpers.yml) catches hardcoded `python3 tools/foo.py` patterns in PR-modified SKILL.md (advisory only, never fails CI). **Phase 3** — three single-owner helpers (`figure-spec`, `paper-illustration-image2`, `experiment-queue`) moved into their SKILL's `scripts/` subdirectory; owner SKILLs use Layer 0 `${CLAUDE_SKILL_DIR}/scripts/` ahead of the canonical chain; legacy `tools/` paths retained as `os.execv` Python forwarding shims. **⚠️ Existing users**: no action needed — legacy `tools/` entries are now shims. If you haven't run `install_aris.sh` since 2026-04-30, one idempotent rerun catches everything up.

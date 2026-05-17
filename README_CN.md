@@ -109,16 +109,6 @@ ARIS 读论文 → 找弱点 → 克隆代码 → 针对*那些*弱点用*那套
 > *💡 从 idea 到论文到讲台到 rebuttal——一条工具链。🌱*
 > 以上是全流程——你也可以单独用任何一个工作流。已有 idea？直接进工作流 1.5。有结果了？跳到工作流 3。见[快速开始](#-快速开始)查看所有命令，[工作流](#-工作流)了解完整流程。
 
-## 🏆 ARIS 社区投稿案例
-
-| 论文 | AI 审稿信号 | 投稿状态 | 作者 | 技术栈 |
-|------|:------------:|----------|------|--------|
-| **CS 论文投稿** | [CSPaper](https://cspaper.org/) 模拟审稿：**8/10**；AI 审稿建议："clear accept" | 已投 CS 会议，等待正式审稿反馈 | [@DefanXue](https://github.com/DefanXue) & [@Monglitay](https://github.com/Monglitay) | Claude Code + GPT-5.4 |
-| **AAAI 2026 论文投稿** | [Stanford Agentic Reviewer](https://paperreview.ai/) AAAI-style 审稿：**7/10**；AI 审稿建议："good paper, accept" | 已投 AAAI 2026 Main Technical，等待官方结果 | [@xinbo820-web](https://github.com/xinbo820-web) | 纯 Codex CLI |
-| UAV-CC | 审稿中 | 已投 IEEE TGRS | [@wxx827](https://github.com/wxx827) | Claude Opus 4.6 + Codex 5.4 xhigh + Cursor |
-
-> 全程 ARIS 完成——从 idea 到 submission。表中 AI 审稿分数来自社区反馈的模拟/第三方审稿工具，不代表会议或期刊官方审稿/录用结果。由于 ARIS 本身就通过 AI reviewer 迭代优化，AI 审稿分数偏高是正常现象，应理解为压力测试反馈；真实人类审稿者仍可能带来更新的文献视角、社区判断、venue taste 和 AI 系统没有建模到的问题。[详情 + 审稿截图 →](#-社区实操--用-aris-完成的论文)
-
 ## 📢 最近更新
 
 - **2026-05-17** — ![FIX](https://img.shields.io/badge/FIX-orange?style=flat-square) 🛠 **Tools-stability roadmap (Phase 1+2+3) 完整收尾**（closes [#176](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/176) / [#177](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/177) / [#178](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep/issues/178)）。社区反馈 `install_aris.sh` 跑完但 helper script 在用户项目里找不到。**Phase 1** —— 10 个 canonical helper 的所有 SKILL.md 调用方现在统一通过 [`integration-contract.md`](skills/shared-references/integration-contract.md) §2 定义的 3 层链 `.aris/tools/` → `tools/` → `$ARIS_REPO/tools/` 解析（§2 同时定义 5 种 failure policy A/B/C/D1/D2/E）。**Phase 2** —— 新增 [advisory CI lint](.github/workflows/lint-skills-helpers.yml) 在 PR 扫硬编码 `python3 tools/foo.py` 模式（仅警告，**永不卡 CI**）。**Phase 3** —— 3 个 single-owner helper（`figure-spec`、`paper-illustration-image2`、`experiment-queue`）迁入对应 SKILL 的 `scripts/` 目录，owner SKILL 用 Layer 0 `${CLAUDE_SKILL_DIR}/scripts/` 优先于 canonical chain，原 `tools/` 路径保留 `os.execv` Python 转发 shim。**⚠️ 现有用户**：无需操作，legacy `tools/` 入口现在是转发 shim。如果 2026-04-30 之后没跑过 `install_aris.sh`，幂等重跑一次即可全部对齐。
