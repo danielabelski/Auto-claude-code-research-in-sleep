@@ -1166,6 +1166,8 @@ Claude Code 读到这些就知道怎么 SSH、激活环境、启动实验。GPT-
 - 典型花费区间（RTX 4090 消融 ~$0.30-2/次，A100/H100 baseline ~$2-10/次）
 - 什么时候用 `gpu: vast` 比 `gpu: remote` / `gpu: local` 更划算
 
+**也不想租？** Review 和改写类 skill 仍可用，只有需要跑实验的修复会被跳过（标记为"需人工跟进"）。
+
 </details>
 
 <details>
