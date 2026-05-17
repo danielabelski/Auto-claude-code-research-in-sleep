@@ -1503,6 +1503,11 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 
 > ⭐ **强烈推荐使用 Claude + GPT-5.4（默认组合）。** 这是经过最充分测试、最稳定的组合。替代方案可用但可能需要调整 prompt。
 
+除了默认的 Claude × GPT-5.4，ARIS 还内置 **9 条替代路由（方案 A-I）**，覆盖 Z.ai 的 GLM、阿里百炼的 Kimi/Qwen/GLM/MiniMax 套餐、ModelScope 免费的 DeepSeek-V3.1、Codex 作为执行者搭配 Claude 或 Gemini 审稿、以及 Google Antigravity 作为执行器。
+
+<details>
+<summary><b>展开完整路由表</b> —— 默认 + 方案 A-I × 执行者 / 审稿人 / 是否需要 Claude API / 是否需要 OpenAI API / 配置指南链接</summary>
+
 | | 执行者 | 审稿人 | 需要 Claude API？ | 需要 OpenAI API？ | 配置指南 |
 |---|--------|--------|:---:|:---:|---------|
 | **默认** ⭐ | Claude Opus/Sonnet | GPT-5.4（Codex MCP） | 是 | 是 | [快速开始](#-快速开始) |
@@ -1515,6 +1520,8 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 | **方案 G** 🆕 | Codex CLI | Claude Code CLI（`claude-review` MCP） | 否* | 否* | [CODEX_CLAUDE_REVIEW_GUIDE_CN](docs/CODEX_CLAUDE_REVIEW_GUIDE_CN.md) |
 | **方案 H** 🆕 | Antigravity（Claude Opus 4.6 / Gemini 3.1 Pro） | GPT-5.4（Codex MCP）或 llm-chat | 否 | 可选 | [ANTIGRAVITY_ADAPTATION_CN](docs/ANTIGRAVITY_ADAPTATION_CN.md) |
 | **方案 I** 🆕 | Codex CLI | Gemini direct API（`gemini-review` MCP） | 否 | 否 | [CODEX_GEMINI_REVIEW_GUIDE_CN](docs/CODEX_GEMINI_REVIEW_GUIDE_CN.md) |
+
+</details>
 
 **怎么选：**
 
