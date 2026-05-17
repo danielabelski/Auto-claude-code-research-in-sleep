@@ -469,6 +469,9 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 
 > ⚙️ Pilot 实验预算（最大时长、超时、GPU 总预算）均可配置——见[自定义](#%EF%B8%8F-自定义)。
 
+<details>
+<summary><b>展开工作流 1 的命令清单示例</b> —— research-lit → idea-creator → novelty-check → research-refine → experiment-plan 一步步该敲什么</summary>
+
 ```
 1. /research-lit "discrete diffusion models"    ← Zotero→Obsidian→本地→网络，整理全景
    /research-lit "topic" — sources: zotero, web  ← 或指定只搜部分源
@@ -481,6 +484,8 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 7. /experiment-plan                              ← claim-driven 实验路线图
 8. /run-experiment → /auto-review-loop           ← 闭环！
 ```
+
+</details>
 
 📝 **博客：** [Claude Code 两月 NeurIPS 指北](http://xhslink.com/o/7IvAJQ41IBA)
 
@@ -496,6 +501,9 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 4. ✅ **Sanity check** — 先跑最小实验，发现运行时 bug
 5. 🚀 **部署**完整实验到 GPU（`/run-experiment`）
 6. 📊 **收集**初始结果，更新实验 tracker
+
+<details>
+<summary><b>展开工作流 1.5 流程图</b> —— 实验计划 → Claude 实现 → GPT-5.4 审码 → sanity check → GPU 部署 → 监控 → 结果</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -521,6 +529,8 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 **涉及 Skills：** `experiment-bridge` + `run-experiment` + `monitor-experiment`
 
 > 💡 **一键调用：** `/experiment-bridge` 自动读取 `refine-logs/EXPERIMENT_PLAN.md`。也可指定：`/experiment-bridge "my_plan.md"`。
@@ -533,19 +543,32 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 >
 > GPT-5.4 审稿 → 定位弱点 → 建议实验 → Claude Code 自动写脚本、部署到 GPU、监控结果、改写论文——你睡觉就行。只需在 `CLAUDE.md` 里配好[GPU 服务器信息](#%EF%B8%8F-gpu-服务器配置自动实验用)。
 
-**涉及 Skills：** `auto-review-loop` + `research-review` + `novelty-check` + `run-experiment` + `analyze-results` + `monitor-experiment`
+1. 🔍 **深度评审** — GPT-5.4 xhigh 对当前论文 / claims / 实验做一遍深读，定位弱点
+2. 🩹 **修复** — Claude 实现修复（改写章节、加 baseline、或通过 `/run-experiment` 跑新实验）；预估超过 4 GPU-小时的实验直接跳过、标记为"需人工跟进"
+3. 📊 **再评估** — `/monitor-experiment` 收结果、改稿、再喂回 reviewer
+4. 🔁 **循环** — 直到分数 ≥ `POSITIVE_THRESHOLD`（默认 6/10）或撞到 `MAX_ROUNDS`（默认 4）；中途上下文窗口满了，工作流会从 `REVIEW_STATE.json` 自动恢复
 
-> 💡 **一键调用：** `/auto-review-loop "你的论文主题"` 自动跑完整个工作流 2。
->
-> **传什么参数？** 简短的主题或范围就够——skill 会自动读取项目中的叙事文档（`NARRATIVE_REPORT.md`）、memory 文件、实验结果和历史 review，为 GPT-5.4 组装完整上下文。示例：
-> - `/auto-review-loop "离散扩散语言模型的 factorized gap"` — 宽泛主题，skill 自动搜集
-> - `/auto-review-loop "重点看第 3-5 节，CRF 结果偏弱"` — 指定范围 + 提示
-> - `/auto-review-loop` — 也行：skill 读项目文件自动推断主题
+<details>
+<summary><b>展开工作流 2 的小流程图</b> —— 外部评审 → 实现修复 / 跑实验 → 监控结果 → 循环到阈值</summary>
 
 ```
 外部 LLM 评审 → Claude Code 实现修复 → /run-experiment 部署 → 收结果 → 再评审 → 循环
                 ↑ 需要新方向时自动 /novelty-check 查新
 ```
+
+</details>
+
+**涉及 Skills：** `auto-review-loop` + `research-review` + `novelty-check` + `run-experiment` + `analyze-results` + `monitor-experiment`
+
+> 💡 **一键调用：** `/auto-review-loop "你的论文主题"` 自动跑完整个工作流 2。
+
+<details>
+<summary><b>展开工作流 2 的参数示例、reviewer 难度等级和完整安全机制</b> —— topic/scope 怎么传、medium/hard/nightmare 区别、6 条安全规则</summary>
+
+**传什么参数？** 简短的主题或范围就够——skill 会自动读取项目中的叙事文档（`NARRATIVE_REPORT.md`）、memory 文件、实验结果和历史 review，为 GPT-5.4 组装完整上下文。示例：
+- `/auto-review-loop "离散扩散语言模型的 factorized gap"` — 宽泛主题，skill 自动搜集
+- `/auto-review-loop "重点看第 3-5 节，CRF 结果偏弱"` — 指定范围 + 提示
+- `/auto-review-loop` — 也行：skill 读项目文件自动推断主题
 
 用法：
 ```
@@ -573,6 +596,8 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 - 🔧 **先修后审** — 必须实现修复后再重新 review，不能只承诺修
 - 💾 **上下文压缩恢复** — 每轮结束后持久化状态到 `REVIEW_STATE.json`。如果上下文窗口满了触发自动 compact，工作流会从状态文件恢复断点继续——无需人工干预
 
+</details>
+
 > ⚙️ MAX_ROUNDS、分数阈值、GPU 限制均可配置——见[自定义](#%EF%B8%8F-自定义)。
 
 📝 **博客：** [开源 | 睡觉 Claude 自动跑实验改文](http://xhslink.com/o/5cBMTDigNXz)
@@ -581,13 +606,15 @@ ARIS 全流程完成并进入投稿/审稿阶段的真实项目。**这里不宣
 
 > "把我的研究报告变成可投稿的 PDF。" 需要本地 LaTeX 环境——见[前置条件](#前置条件)。
 
-**涉及 Skills：** `paper-plan` + `paper-figure` + `paper-write` + `paper-compile` + `auto-paper-improvement-loop` +（投稿后）`paper-poster` + `paper-slides`
+1. 📝 **叙事** — 写 `NARRATIVE_REPORT.md`（声明 / 实验 / 结果 / 图表说明）；模板见 [`templates/NARRATIVE_REPORT_TEMPLATE.md`](templates/NARRATIVE_REPORT_TEMPLATE.md)
+2. 🧭 **规划** — `/paper-plan` 生成 claims-evidence 矩阵 + 分节计划
+3. 📊 **画图** — `/paper-figure` 从 JSON/CSV 生成数据驱动的图表和对比表
+4. ✍️ **写作** — `/paper-write` 逐 section 生成 LaTeX
+5. 🔧 **编译** — `/paper-compile` 编 PDF、修错、跑页数验证
+6. ✨ **润色** — `/auto-paper-improvement-loop` 跑 2 轮 GPT-5.4 内容审稿 + 终局格式合规检查
 
-> **一键调用：** `/paper-writing "NARRATIVE_REPORT.md"` 自动跑完整个工作流 3。
-
-**输入：** 一份 `NARRATIVE_REPORT.md`，描述研究内容：声明、实验、结果、图表。叙事越详细（尤其是图表描述和定量结果），输出越好。完整示例见 [`templates/NARRATIVE_REPORT_TEMPLATE.md`](templates/NARRATIVE_REPORT_TEMPLATE.md)。
-
-**输出：** 一个可投稿的 `paper/` 目录，含 LaTeX 源码、干净的 `.bib`（仅含实际引用）、编译好的 PDF。
+<details>
+<summary><b>展开工作流 3 的写作流向图与命令清单</b> —— NARRATIVE_REPORT → /paper-plan → /paper-figure → /paper-write → /paper-compile → 润色循环</summary>
 
 ```
 NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /paper-write ──► /paper-compile
@@ -604,6 +631,19 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 6. /auto-paper-improvement-loop — 内容审稿 ×2 + 格式合规检查
 ```
 
+</details>
+
+**涉及 Skills：** `paper-plan` + `paper-figure` + `paper-write` + `paper-compile` + `auto-paper-improvement-loop` +（投稿后）`paper-poster` + `paper-slides`
+
+> **一键调用：** `/paper-writing "NARRATIVE_REPORT.md"` 自动跑完整个工作流 3。
+
+**输入：** 一份 `NARRATIVE_REPORT.md`，描述研究内容：声明、实验、结果、图表。叙事越详细（尤其是图表描述和定量结果），输出越好。
+
+**输出：** 一个可投稿的 `paper/` 目录，含 LaTeX 源码、干净的 `.bib`（仅含实际引用）、编译好的 PDF。
+
+<details>
+<summary><b>展开工作流 3 的核心特性细节</b> —— Claims-Evidence 矩阵、bib 清理、figure 模式、ICLR 端到端实测</summary>
+
 **核心特性：**
 - 📐 **Claims-Evidence 矩阵** — 每个声明映射到证据，每个实验支撑一个声明
 - 📊 **自动图表生成** — 从 JSON 数据生成折线图、柱状图、对比表
@@ -617,9 +657,14 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 
 **端到端实测：** 从一份 NARRATIVE_REPORT.md 生成了一篇 9 页 ICLR 2026 理论论文（7 节、29 条引用、4 张图、2 个对比表）——零编译错误、零 undefined reference。
 
+</details>
+
 #### 论文自动润色循环 ✨
 
 工作流 3 生成论文后，`/auto-paper-improvement-loop` 自动跑 2 轮 GPT-5.4 xhigh 内容审稿 → 修复 → 重编译，外加一轮格式合规检查，将粗稿自动提升到可投稿质量。
+
+<details>
+<summary><b>展开论文自动润色 benchmark</b> —— 实测 ICLR 2026 理论论文分数轨迹（4/10 → 8.5/10）+ Round 1/2/3 详细修复清单</summary>
 
 **分数变化（实测 — ICLR 2026 理论论文）：**
 
@@ -668,6 +713,8 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 
 </details>
 
+</details>
+
 ### 工作流 4：Rebuttal 📝（安全应对审稿意见）
 
 > **"审稿意见来了。帮我写一份有根据、不夸大的 rebuttal。"**
@@ -683,6 +730,9 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 7. 🔬 **GPT-5.4 压力测试** —— 内部怀疑式终审 draft
 8. 📄 **定稿** —— 两份产物：`PASTE_READY.txt`（精确字数，直接粘贴投递）+ `REBUTTAL_DRAFT_rich.md`（扩展版用于人工编辑）
 9. 🔄 **Follow-up 回合** —— reviewer 追问场景的 delta 回复，技术细节逐轮升级
+
+<details>
+<summary><b>展开工作流 4 的 rebuttal 流程图</b> —— 解析意见 → 策略 → 可选证据补跑 → 起草 → GPT-5.4 压测 → 双版本定稿 → follow-up 回合</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -712,6 +762,8 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 **涉及 skill：** `rebuttal`
 
 > 💡 **Quick mode：** `/rebuttal — quick mode: true` 跑完解析 + 策略（Phase 0-3）就停。先看 reviewer 想要什么，再决定要不要起草完整 draft。
@@ -736,6 +788,9 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 5. 🗡 **对抗 gate** — `/kill-argument` 终审 attack/adjudication；任何 critical 级 `still_unresolved` 拒绝放行。
 6. 📤 **编译 + 推送** — `/paper-compile` + 可选 `/overleaf-sync push`。
 
+<details>
+<summary><b>展开工作流 5 的 resubmit 流程图</b> —— 隔离副本 → 5 层匿名 → soft-only 审计 → 白名单微编辑 → /kill-argument 对抗 gate → 编译 + Overleaf push</summary>
+
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │              工作流 5：纯文本 Resubmit                                │
@@ -752,6 +807,8 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 │  编译 + Overleaf push     →    <NEW_VENUE_DIR>/                      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 **涉及 skill：** `resubmit-pipeline`（orchestrator）、`auto-paper-improvement-loop --edit-whitelist`、`citation-audit --soft-only`、`proof-checker`、`paper-claim-audit`、`kill-argument`、`paper-compile`、`overleaf-sync`（可选）
 
@@ -774,6 +831,9 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 3. 💎 **Polish** —— `/slides-polish` 对照 reference PDF 一页一页 Codex 审，套 fix-pattern catalog（PPTX 字号 1.5-1.8× 缩放保证投影可读、字号 bump 后 text frame resize、banner 用 tcolorbox、italic style 泄漏防御、em-dash 间距、中文 EA font 用 PingFang SC、anonymity placeholder 纪律）。
 4. 🛡️ **审计**（当 `assurance: conference-ready`）—— `/paper-claim-audit` + `/citation-audit` 在合成 paper 目录上跑（slide 文字 + 讲稿 + 完整 script 物化成 `.aris/paper-talk/audit-input/sections/*.tex` + symlink 真实 `.bib` / `results/` / `figures/`），各输出 6 态 JSON verdict（见 `shared-references/assurance-contract.md`）；任何非 green 阻断 Final Report。
 
+<details>
+<summary><b>展开工作流 6 的 talk-prep 流程图</b> —— paper → outline → /paper-slides → /slides-polish → 可选 conference-ready 审计 gate</summary>
+
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │             工作流 6：会议演讲                                        │
@@ -791,6 +851,8 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 │                 └─ no  → 直出 Final Report                           │
 └──────────────────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 **涉及 skill：** `paper-talk`（orchestrator）、`paper-slides`、`slides-polish`、`paper-claim-audit` + `citation-audit`（仅 `assurance: conference-ready`）
 
@@ -821,6 +883,9 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 | `/result-to-claim` 判定 | 结果写回 | 实验页面，claim 状态更新（支持/否定） |
 | 3+ idea 失败 | 建议重新构思 | "💡 wiki 已经知道什么不行了，考虑重新 ideate" |
 
+<details>
+<summary><b>展开 Research Wiki 的数据模型、螺旋上升示例和手动子命令</b> —— 四种实体、3 轮"失败 idea → 更好 idea"演化、ingest/query/lint/stats</summary>
+
 **四种实体：** 📄 论文、💡 想法、🧪 实验、📋 声明
 
 **螺旋上升：**
@@ -839,6 +904,8 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 /research-wiki stats                               # 统计概览
 ```
 
+</details>
+
 > 🔒 **安全设计：** 所有 hook 都有 `if wiki 存在` 守卫。没初始化 = 零影响。纯 Python 标准库，无依赖。
 
 ---
@@ -848,6 +915,9 @@ NARRATIVE_REPORT.md ──► /paper-plan ──► /paper-figure ──► /pap
 > **"分析我的使用模式，改进你自己的技能。"**
 
 与工作流 1–4 优化*研究产物*（论文、代码、实验）不同，工作流 M 优化的是 *harness 本身*——SKILL.md 指令、默认参数和收敛规则。灵感来自 [Meta-Harness](https://arxiv.org/abs/2603.28052)（Lee et al., 2026）。
+
+<details>
+<summary><b>展开工作流 M 的一次性设置与使用命令</b> —— Claude Code hook 安装、/meta-optimize 各变体（项目 / 单 skill / --global / apply）</summary>
 
 **设置（一次性，在普通终端）：**
 ```bash
@@ -866,6 +936,8 @@ claude   # hooks 立即生效
 > /meta-optimize apply 1                # 应用推荐的修改 #1
 ```
 
+</details>
+
 **工作原理：**
 
 1. 📊 **被动记录** — hooks 静默记录每次技能调用、工具执行、失败、参数覆盖。事件同时写入**项目级**（`.aris/meta/events.jsonl`）和**全局**（`~/.aris/meta/events.jsonl`，带 `"project"` 标签）两份日志
@@ -873,6 +945,9 @@ claude   # hooks 立即生效
 3. 🩹 **生成 Patch** — 对目标 SKILL.md 生成最小修改 + 数据支撑的理由
 4. 🔬 **Reviewer 审核** — GPT-5.4 xhigh 评估每个 patch 是否安全
 5. ✅ **用户批准** — 从不自动应用，用户说了算
+
+<details>
+<summary><b>展开工作流 M 的流程图与"优化对象"列表</b> —— 事件日志 → SKILL.md patch → GPT-5.4 审核 → 用户批准；prompt / 默认参数 / 收敛规则 / 错误处理</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -898,6 +973,8 @@ claude   # hooks 立即生效
 ```
 
 **优化对象（harness 组件）：** 技能 prompt、默认参数（`difficulty`、`MAX_ROUNDS`、`threshold`）、收敛规则、错误处理模式。
+
+</details>
 
 **不优化：** 研究产物（论文、代码、实验）——那是 W1–W4 的工作。
 
@@ -926,6 +1003,13 @@ claude   # hooks 立即生效
 
 [Oracle](https://github.com/steipete/oracle) 解锁 **GPT-5.4 Pro** 作为 ARIS 审稿者——最强推理模型。适合数学证明验证、逐行代码审计和复杂实验设计评审。
 
+**用法：** 给任意 reviewer-aware skill（`/research-review`、`/proof-checker`、`/experiment-audit`、`/auto-review-loop`、`/idea-creator`、`/rebuttal` 等）加 `— reviewer: oracle-pro`。
+
+**默认永远是 Codex xhigh。** Oracle 未安装 = 零影响。`— reviewer: oracle-pro` 在未装 Oracle 时优雅降级到 Codex 并给警告。
+
+<details>
+<summary><b>展开 Oracle 安装命令与各 skill 示例</b> —— npm install、claude mcp add、API / 浏览器模式选择、4 个 reviewer-aware skill 示例</summary>
+
 **设置：**
 ```bash
 npm install -g @steipete/oracle          # 安装 Oracle
@@ -935,7 +1019,7 @@ export OPENAI_API_KEY="your-key"         # API 模式（快）
 # 或：在 Chrome 登录 chatgpt.com          # 浏览器模式（免费）
 ```
 
-**用法：**
+**示例 — 给任意 skill 加 `— reviewer: oracle-pro`：**
 ```bash
 /research-review "草稿" — reviewer: oracle-pro
 /proof-checker "paper/" — reviewer: oracle-pro
@@ -943,7 +1027,7 @@ export OPENAI_API_KEY="your-key"         # API 模式（快）
 /auto-review-loop "范围" — reviewer: oracle-pro
 ```
 
-**默认永远是 Codex xhigh。** Oracle 未安装 = 零影响。
+</details>
 
 > 📖 完整规范：[`shared-references/reviewer-routing.md`](skills/shared-references/reviewer-routing.md)
 

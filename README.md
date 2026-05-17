@@ -524,6 +524,9 @@ Don't have a concrete idea yet? Just give a research direction — `/idea-discov
 
 The output is a ranked `IDEA_REPORT.md` plus a refined proposal (`refine-logs/FINAL_PROPOSAL.md`) and experiment plan (`refine-logs/EXPERIMENT_PLAN.md`) for the top idea. Dead-end ideas are documented too, saving future exploration.
 
+<details>
+<summary><b>Show W1 flow diagram and example command sequence</b> — research-lit → idea-creator → novelty-check → research-refine → experiment-plan</summary>
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │              Idea Discovery & Method Refinement                  │
@@ -576,6 +579,8 @@ The output is a ranked `IDEA_REPORT.md` plus a refined proposal (`refine-logs/FI
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 **Skills involved:** `research-lit` + `idea-creator` + `novelty-check` + `research-review` + `research-refine-pipeline`
 
 > 💡 **One-command shortcut:** `/idea-discovery "your research direction"` runs this entire workflow automatically.
@@ -598,6 +603,9 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 4. ✅ **Sanity check** — run the smallest experiment first to catch runtime bugs
 5. 🚀 **Deploy** full experiment suite to GPU via `/run-experiment`
 6. 📊 **Collect** initial results and update the experiment tracker
+
+<details>
+<summary><b>Show W1.5 flow diagram</b> — experiment plan → Claude implements → GPT-5.4 code review → sanity check → GPU deploy → monitor → results</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -625,6 +633,8 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 **Skills involved:** `experiment-bridge` + `run-experiment` + `monitor-experiment`
 
 > 💡 **One-command shortcut:** `/experiment-bridge` reads `refine-logs/EXPERIMENT_PLAN.md` automatically. Or point it to any plan: `/experiment-bridge "my_plan.md"`.
@@ -636,6 +646,14 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 > **"Review my paper, fix what's wrong, repeat until it's good."**
 >
 > GPT-5.4 reviews → identifies weaknesses → suggests experiments → Claude Code writes scripts, deploys to GPU, monitors results, rewrites the paper — all while you sleep. Just add your [GPU server config](#%EF%B8%8F-gpu-server-setup-for-auto-experiments) to `CLAUDE.md`.
+
+1. 🔍 **Deep review** — GPT-5.4 xhigh reviews the current paper / claims / experiments and identifies weaknesses
+2. 🩹 **Fix** — Claude implements the fixes (rewrites sections, adds baselines, or runs new experiments via `/run-experiment`); skips any experiment estimated > 4 GPU-hours and flags it for manual follow-up
+3. 📊 **Re-evaluate** — collect results via `/monitor-experiment`, update paper, feed back to the reviewer
+4. 🔁 **Repeat** — until score ≥ `POSITIVE_THRESHOLD` (default 6/10) or `MAX_ROUNDS` (default 4) is hit; if context window fills mid-loop, the workflow auto-resumes from `REVIEW_STATE.json`
+
+<details>
+<summary><b>Show W2 loop diagram</b> — external review → implement fixes / run experiments → monitor results → repeat until threshold</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -662,14 +680,19 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 └─────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 **Skills involved:** `auto-review-loop` + `research-review` + `novelty-check` + `run-experiment` + `analyze-results` + `monitor-experiment`
 
 > 💡 **One-command shortcut:** `/auto-review-loop "your paper topic"` runs this entire workflow automatically.
->
-> **What to pass as argument?** A short topic or scope is enough — the skill automatically reads your project's narrative docs (`NARRATIVE_REPORT.md`), memory files, experiment results, and prior reviews to build the full context for GPT-5.4. Examples:
-> - `/auto-review-loop "factorized gap in discrete diffusion LMs"` — broad topic, skill finds everything
-> - `/auto-review-loop "focus on Section 3-5, our CRF results are weak"` — targeted scope with hints
-> - `/auto-review-loop` — also works: skill reads project files and infers the topic
+
+<details>
+<summary><b>Show W2 usage examples, reviewer difficulty levels, and full safety guarantees</b> — topic/scope arguments, medium/hard/nightmare, 6 safety rules</summary>
+
+**What to pass as argument?** A short topic or scope is enough — the skill automatically reads your project's narrative docs (`NARRATIVE_REPORT.md`), memory files, experiment results, and prior reviews to build the full context for GPT-5.4. Examples:
+- `/auto-review-loop "factorized gap in discrete diffusion LMs"` — broad topic, skill finds everything
+- `/auto-review-loop "focus on Section 3-5, our CRF results are weak"` — targeted scope with hints
+- `/auto-review-loop` — also works: skill reads project files and infers the topic
 
 **🎮 Reviewer Difficulty** — control how adversarial the reviewer is:
 
@@ -692,6 +715,8 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 - 🔧 **Fix before re-review** — must actually implement fixes before resubmitting; no empty promises
 - 💾 **Compact recovery** — persists state (`REVIEW_STATE.json`) after each round. If the context window fills up and auto-compacts mid-loop, the workflow reads the state file and resumes from where it left off — no human intervention needed
 
+</details>
+
 > ⚙️ MAX_ROUNDS, score threshold, and GPU limits are configurable — see [Customization](#%EF%B8%8F-customization).
 
 📝 **Blog post:** [开源 | 睡觉 Claude 自动跑实验改文](http://xhslink.com/o/5cBMTDigNXz)
@@ -699,6 +724,16 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 ### Workflow 3: Paper Writing Pipeline 📝
 
 > **"Turn my research narrative into a submission-ready PDF."** Requires a local LaTeX environment — see [Prerequisites](#prerequisites).
+
+1. 📝 **Narrate** — write `NARRATIVE_REPORT.md` (claims, experiments, results, figure descriptions); see [`templates/NARRATIVE_REPORT_TEMPLATE.md`](templates/NARRATIVE_REPORT_TEMPLATE.md)
+2. 🧭 **Plan** — `/paper-plan` builds the claims-evidence matrix + section plan
+3. 📊 **Figures** — `/paper-figure` generates data-driven plots and comparison tables from JSON/CSV
+4. ✍️ **Write** — `/paper-write` produces section-by-section LaTeX
+5. 🔧 **Compile** — `/paper-compile` builds the PDF, fixes errors, runs the page-limit check
+6. ✨ **Improve** — `/auto-paper-improvement-loop` runs 2 rounds of GPT-5.4 content review + final format check
+
+<details>
+<summary><b>Show W3 architecture diagram and exact writing flow</b> — NARRATIVE_REPORT → /paper-plan → /paper-figure → /paper-write → /paper-compile → improvement loop</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -735,13 +770,18 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 └─────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 **Skills involved:** `paper-plan` + `paper-figure` + `paper-write` + `paper-compile` + `auto-paper-improvement-loop` + (post-acceptance) `paper-poster` + `paper-slides`
 
 > **One-command shortcut:** `/paper-writing "NARRATIVE_REPORT.md"` runs this entire workflow automatically.
 
-**Input:** A `NARRATIVE_REPORT.md` describing the research: claims, experiments, results, figures. The more detailed the narrative (especially figure descriptions and quantitative results), the better the output. See [`templates/NARRATIVE_REPORT_TEMPLATE.md`](templates/NARRATIVE_REPORT_TEMPLATE.md) for a complete example.
+**Input:** A `NARRATIVE_REPORT.md` describing the research: claims, experiments, results, figures. The more detailed the narrative (especially figure descriptions and quantitative results), the better the output.
 
 **Output:** A `paper/` directory with LaTeX source, clean `.bib` (only cited entries), and compiled PDF. The PDF is labelled `submission-ready` **only when** run at `— effort: max | beast` (or explicit `— assurance: submission`) **and** `tools/verify_paper_audits.sh` reports green on the three mandatory audits (`proof-checker`, `paper-claim-audit`, `citation-audit`); see [Assurance Gate](#assurance-gate-effort-max--beast) below. At the default `balanced` level, the output is a reviewed draft.
+
+<details>
+<summary><b>Show W3 feature details</b> — Claims-Evidence Matrix, figure modes, clean bib, Gemini API setup, ICLR end-to-end test</summary>
 
 **Key features:**
 - 📐 **Claims-Evidence Matrix** — every claim maps to evidence, every experiment supports a claim
@@ -758,9 +798,14 @@ Already have an experiment plan (from Workflow 1 or your own)? `/experiment-brid
 
 **Tested end-to-end:** Generated a 9-page ICLR 2026 theory paper (7 sections, 29 citations, 4 figures, 2 comparison tables) from a single NARRATIVE_REPORT.md — zero compilation errors, zero undefined references.
 
+</details>
+
 #### Auto Paper Improvement Loop ✨
 
 After Workflow 3 generates the paper, `/auto-paper-improvement-loop` runs 2 rounds of GPT-5.4 xhigh content review → fix → recompile, plus a final format compliance check, autonomously polishing the paper from rough draft to a reviewer-scored draft. Whether the result is tagged `submission-ready` is decided separately by the Phase 6 assurance gate (see [Assurance Gate](#assurance-gate-effort-max--beast)).
+
+<details>
+<summary><b>Show auto-paper-improvement benchmark</b> — Score Progression on a real ICLR 2026 theory paper (4/10 → 8.5/10), plus Round 1/2/3 fix details</summary>
 
 **Score Progression (Real Test — ICLR 2026 theory paper):**
 
@@ -809,6 +854,8 @@ After Workflow 3 generates the paper, `/auto-paper-improvement-loop` runs 2 roun
 
 </details>
 
+</details>
+
 ### Workflow 4: Rebuttal 📝 (reply to reviewers safely)
 
 > **"Reviews are in. Help me draft a safe, grounded rebuttal."**
@@ -824,6 +871,9 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 7. 🔬 **GPT-5.4 stress test** — internal skeptical review of the draft
 8. 📄 **Finalize** — two outputs: `PASTE_READY.txt` (exact character count) + `REBUTTAL_DRAFT_rich.md` (extended version for manual editing)
 9. 🔄 **Follow-up rounds** — delta replies for reviewer discussions, technically escalating
+
+<details>
+<summary><b>Show W4 rebuttal flow diagram</b> — parse reviews → strategy → optional evidence sprint → draft → GPT-5.4 stress test → finalize 2 versions → follow-up rounds</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -853,6 +903,8 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+</details>
+
 **Skills involved:** `rebuttal`
 
 > 💡 **Quick mode:** `/rebuttal — quick mode: true` stops after parsing + strategy (Phase 0-3). See what reviewers want before committing to a full draft.
@@ -877,6 +929,9 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 5. 🗡 **Adversarial gate** — `/kill-argument` final attack/adjudication pass; rejection if any `still_unresolved` at critical severity.
 6. 📤 **Compile + push** — `/paper-compile` + optional `/overleaf-sync push`.
 
+<details>
+<summary><b>Show W5 resubmit flow diagram</b> — isolated copy → 5-layer anonymity → soft-only audits → whitelist microedit → kill-argument adversarial gate → compile + Overleaf push</summary>
+
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │              Workflow 5: Text-only Resubmit                          │
@@ -893,6 +948,8 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 │  Compile + Overleaf push     →    <NEW_VENUE_DIR>/                   │
 └──────────────────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 **Skills involved:** `resubmit-pipeline` (orchestrator), `auto-paper-improvement-loop --edit-whitelist`, `citation-audit --soft-only`, `proof-checker`, `paper-claim-audit`, `kill-argument`, `paper-compile`, `overleaf-sync` (optional)
 
@@ -915,6 +972,9 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 3. 💎 **Polish** — `/slides-polish` per-page Codex review against the reference PDF, applying a fix-pattern catalog (PPTX font scaling 1.5-1.8× for projector legibility, text-frame resize after font bump, banner-as-tcolorbox, italic style leak guard, em-dash spacing, Chinese EA font hint via PingFang SC, anonymity placeholder discipline).
 4. 🛡️ **Audit** (when `assurance: conference-ready`) — `/paper-claim-audit` + `/citation-audit` run against a synthetic paper directory at `.aris/paper-talk/audit-input/sections/*.tex` + symlinked `.bib` / `results/` / `figures/`. Each emits a 6-state JSON verdict per `shared-references/assurance-contract.md`; non-green blocks the Final Report.
 
+<details>
+<summary><b>Show W6 talk-prep flow diagram</b> — paper → outline → /paper-slides → /slides-polish → optional conference-ready audit gate</summary>
+
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
 │             Workflow 6: Conference Talk                              │
@@ -932,6 +992,8 @@ Got reviews back? `/rebuttal` parses them, builds a strategy, and drafts a venue
 │                 └─ no  → Final Report directly                       │
 └──────────────────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 **Skills involved:** `paper-talk` (orchestrator), `paper-slides`, `slides-polish`, `paper-claim-audit` + `citation-audit` (at `assurance: conference-ready`)
 
@@ -962,6 +1024,9 @@ Without the wiki, ARIS is stateless — every `/idea-discovery` starts from scra
 | `/result-to-claim` judges | Results written back | Experiment page created, claim status updated (supported/invalidated) |
 | 3+ ideas fail | Re-ideation suggested | "💡 Consider re-running /idea-creator — the wiki now knows what doesn't work" |
 
+<details>
+<summary><b>Show Research Wiki data model</b> — Paper / Idea / Experiment / Claim entities and the typed graph edges that connect them</summary>
+
 **Four entity types:**
 
 | Entity | What it stores | Example |
@@ -978,6 +1043,11 @@ paper --contradicts--> paper          idea --tested_by--> experiment
 paper --addresses_gap--> gap          experiment --supports--> claim
 paper --supersedes--> paper           experiment --invalidates--> claim
 ```
+
+</details>
+
+<details>
+<summary><b>Show Research Wiki spiral-learning example and manual subcommands</b> — failed ideas → better ideas across 3 rounds; ingest / query / update / lint / stats</summary>
 
 **Spiral learning in action:**
 ```
@@ -1002,6 +1072,8 @@ Round 3: /idea-creator reads wiki → knows A failed + D partial → generates i
 /research-wiki stats                              # overview (paper/idea/experiment/claim counts)
 ```
 
+</details>
+
 > 🔒 **Safe by design:** All workflow hooks are guarded by `if research-wiki/ exists`. No wiki = no impact. Zero dependencies (pure Python stdlib). You choose when to enable it.
 
 ---
@@ -1011,6 +1083,9 @@ Round 3: /idea-creator reads wiki → knows A failed + D partial → generates i
 > **"Analyze my usage patterns and improve your own skills."**
 
 Unlike Workflows 1–4 which optimize *research artifacts* (papers, code, experiments), Workflow M optimizes the *harness itself* — the SKILL.md instructions, default parameters, and convergence rules that govern how ARIS operates. Inspired by [Meta-Harness](https://arxiv.org/abs/2603.28052) (Lee et al., 2026).
+
+<details>
+<summary><b>Show Workflow M one-time setup and usage commands</b> — Claude Code hook install, /meta-optimize variants (project / per-skill / --global / apply)</summary>
 
 **Setup (one-time, in normal terminal):**
 ```bash
@@ -1029,6 +1104,8 @@ claude   # hooks active immediately
 > /meta-optimize apply 1                # apply recommended change #1
 ```
 
+</details>
+
 **How it works:**
 
 1. 📊 **Passive logging** — Claude Code hooks silently record every skill invocation, tool call, failure, parameter override, and user prompt. Events are written to **both** project-level (`.aris/meta/events.jsonl`) and global (`~/.aris/meta/events.jsonl`, with a `"project"` tag) logs. Zero user effort.
@@ -1040,6 +1117,9 @@ claude   # hooks active immediately
 3. 🩹 **Patch proposal** — generates minimal diffs to target SKILL.md files with data-backed justifications
 4. 🔬 **Reviewer gate** — GPT-5.4 xhigh reviews each patch: does the evidence support it? could it hurt other users?
 5. ✅ **User approval** — only applied with explicit user consent. All changes are logged and reversible.
+
+<details>
+<summary><b>Show Workflow M diagram and "what gets optimized" component table</b> — event logs → SKILL.md patches → GPT-5.4 review → user approval; prompts / defaults / convergence / error handling</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -1072,6 +1152,8 @@ claude   # hooks active immediately
 | Convergence rules | When to stop the review loop, retry counts |
 | Error handling | Auto-debug patterns, failure recovery steps |
 
+</details>
+
 **What does NOT get optimized:** research artifacts (papers, code, experiments) — that's what W1–W4 do.
 
 **Skills involved:** `meta-optimize`
@@ -1097,6 +1179,9 @@ claude   # hooks active immediately
 - Reviewer independence: **always on**
 - Experiment integrity: **always on**
 
+<details>
+<summary><b>Show effort usage examples and per-skill comparison table</b> — command overrides; exact counts for papers / ideas / pilots / rounds / seeds / audit depth at each level</summary>
+
 ```bash
 # Every skill accepts effort independently
 /research-lit "topic" — effort: beast              # 40-50 papers, 15+ queries
@@ -1109,9 +1194,6 @@ claude   # hooks active immediately
 # Full pipeline
 /research-pipeline "your topic" — effort: beast    # top-venue sprint mode
 ```
-
-<details>
-<summary><b>Full effort comparison table</b> — click to expand</summary>
 
 | Skill | Dimension | lite | balanced | max | beast |
 |-------|-----------|:----:|:--------:|:---:|:-----:|
@@ -1158,6 +1240,9 @@ pass `— assurance: submission`, see the new gate.
 "depth-only, no audit gate" behavior back. Legal but discouraged for
 actual submissions.
 
+<details>
+<summary><b>Show optional Stop-hook hardening snippet</b> — harness-level block (~/.claude/settings.json) that physically prevents session end while the verifier is red</summary>
+
 **Optional harness hardening (advanced):** teams who want the model to
 be *physically* prevented from ending a session while the verifier is red
 can register a Stop hook in `~/.claude/settings.json` (replace
@@ -1178,6 +1263,8 @@ This is not required — the default repo behavior (Phase 6 verifier-as-truth)
 already blocks Final Report emission on a red verdict. The Stop hook is a
 belt-and-suspenders layer for teams that want harness-level enforcement.
 
+</details>
+
 > 📖 Full specification: [`shared-references/assurance-contract.md`](skills/shared-references/assurance-contract.md)
 
 ### 🧿 Optional: GPT-5.4 Pro via Oracle
@@ -1185,6 +1272,13 @@ belt-and-suspenders layer for teams that want harness-level enforcement.
 > **For expert researchers who want the strongest possible reviewer.**
 
 [Oracle](https://github.com/steipete/oracle) unlocks **GPT-5.4 Pro** as an ARIS reviewer — the strongest reasoning model available. Pro excels at deep mathematical proof verification, line-by-line code auditing, and complex experimental design critique.
+
+**Usage rule:** add `— reviewer: oracle-pro` to any reviewer-aware skill (`/research-review`, `/proof-checker`, `/experiment-audit`, `/auto-review-loop`, `/idea-creator`, `/rebuttal`, …).
+
+**Default is always Codex xhigh.** Oracle not installed = zero impact. `— reviewer: oracle-pro` without Oracle installed = graceful fallback to Codex + warning.
+
+<details>
+<summary><b>Show Oracle setup commands and per-skill examples</b> — npm install, claude mcp add, API vs browser mode, 6 reviewer-aware skill examples</summary>
 
 **Setup:**
 ```bash
@@ -1203,7 +1297,7 @@ export OPENAI_API_KEY="your-key"
 # Just open Chrome → chatgpt.com → log in
 ```
 
-**Usage — add `— reviewer: oracle-pro` to any skill:**
+**Examples — add `— reviewer: oracle-pro` to any skill:**
 ```bash
 /research-review "my draft" — reviewer: oracle-pro          # Pro-level paper critique
 /proof-checker "paper/" — reviewer: oracle-pro              # deepest mathematical verification
@@ -1213,7 +1307,7 @@ export OPENAI_API_KEY="your-key"
 /rebuttal "paper/ + reviews" — reviewer: oracle-pro         # Pro stress tests your rebuttal
 ```
 
-**Default is always Codex xhigh.** Oracle not installed = zero impact. `— reviewer: oracle-pro` without Oracle installed = graceful fallback to Codex + warning.
+</details>
 
 > 📖 Full specification: [`shared-references/reviewer-routing.md`](skills/shared-references/reviewer-routing.md)
 
