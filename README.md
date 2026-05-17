@@ -380,19 +380,16 @@ All pipeline behaviors are configurable via inline overrides — append `— key
 
 See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model combinations](#-alternative-model-combinations) if you don't have Claude/OpenAI API.
 
-<details>
-<summary><b>🧠 Smart-update workflow</b> — git pull + dry-run + apply; detects personal customizations and only updates safe skills</summary>
-
-```bash
-cd Auto-claude-code-research-in-sleep
-git pull
-bash tools/smart_update.sh          # dry-run: shows what's new/changed/safe
-bash tools/smart_update.sh --apply  # apply: adds new + updates safe ones
-```
-
-Compares local skills with upstream, detects personal customizations (server paths, API keys, etc.), and only updates skills that are safe to replace. Skills with your personal info are flagged for manual review.
-
-</details>
+> 🧠 **Smart-update workflow** — git pull + dry-run + apply; detects personal customizations and only updates safe skills.
+>
+> ```bash
+> cd Auto-claude-code-research-in-sleep
+> git pull
+> bash tools/smart_update.sh          # dry-run: shows what's new/changed/safe
+> bash tools/smart_update.sh --apply  # apply: adds new + updates safe ones
+> ```
+>
+> Compares local skills with upstream, detects personal customizations (server paths, API keys, etc.), and only updates skills that are safe to replace. Skills with your personal info are flagged for manual review.
 
 ## ✨ Features
 
