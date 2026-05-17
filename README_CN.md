@@ -176,7 +176,7 @@ ARIS 读论文 → 找弱点 → 克隆代码 → 针对*那些*弱点用*那套
 - **2026-03-15** — 🔀 **自带模型！** [任意 OpenAI 兼容 API](#-替代模型组合) 均可作为审查器
 - **2026-03-15** — 🐾 **[OpenClaw 适配指南](docs/OPENCLAW_ADAPTATION.md)** — 在 OpenClaw 中使用 ARIS 工作流
 - **2026-03-15** — 📐 **[`proof-writer`](skills/proof-writer/SKILL.md)** + 📚 **反幻觉引用**（DBLP/CrossRef）
-- **2026-03-14** — 📱 [飞书集成](#-飞书lark-集成可选)：三种模式（关闭/推送/交互）
+- **2026-03-14** — 📱 [飞书集成](docs/integrations/FEISHU_CN.md)：三种模式（关闭/推送/交互）
 - **2026-03-13** — 🛑 Human-in-the-loop：`AUTO_PROCEED` 检查点
 - **2026-03-12** — 🔗 Zotero + Obsidian + arXiv/Scholar 多源文献检索
 - **2026-03-12** — 🚀 三大工作流端到端贯通 + 📝 论文写作流水线（4/10 → 8.5/10）
@@ -307,7 +307,7 @@ claude
 ## ✨ 功能亮点
 
 - 📊 **31 个可组合 skill** — 自由混搭，或串联为完整流水线（`/idea-discovery`、`/auto-review-loop`、`/paper-writing`、`/research-pipeline`）
-- 🔍 **文献 & 查新** — 多源论文搜索（**[Zotero](#-zotero-集成可选)** + **[Obsidian](#-obsidian-集成可选)** + **本地 PDF** + arXiv/Scholar）+ 跨模型查新验证
+- 🔍 **文献 & 查新** — 多源论文搜索（**[Zotero](docs/integrations/ZOTERO_CN.md)** + **[Obsidian](docs/integrations/OBSIDIAN_CN.md)** + **本地 PDF** + arXiv/Scholar）+ 跨模型查新验证
 - 💡 **Idea 发现** — 文献调研 → 头脑风暴 8-12 个 idea → 查新 → GPU pilot 实验 → 排名报告
 - 🔄 **自动 review 循环** — 4 轮自主审稿，一夜从 5/10 提升到 7.5/10，自动跑 20+ 组 GPU 实验
 - 📝 **论文写作** — 研究叙事 → 大纲 → 图表 → LaTeX → PDF → 自动审稿（4/10 → 8.5/10），一条命令。通过 [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) 反幻觉引用
@@ -316,7 +316,7 @@ claude
 - 🖥️ **审稿驱动实验** — GPT-5.4 说"跑个消融实验"，Claude Code 自动写脚本、rsync 到服务器、screen 启动、收结果、写回论文。只需在 `CLAUDE.md` 里配好服务器信息（[配置指南](#%EF%B8%8F-gpu-服务器配置自动实验用)）
 - 🔀 **灵活模型** — 默认 Claude × GPT-5.4，也支持 [GLM、MiniMax、Kimi、LongCat、DeepSeek 等](#-替代模型组合)——无需 Claude 或 OpenAI API
 - 🛑 **Human-in-the-loop** — 关键决策点可配置检查点。`AUTO_PROCEED=true` 全自动，`false` 逐步审批
-- 📱 **[飞书通知](#-飞书lark-集成可选)** — 三种模式：**关闭（默认，强烈建议大多数用户保持关闭）**、仅推送（webhook，手机收通知）、双向交互（在飞书里审批/回复）。未配置时零影响
+- 📱 **[飞书通知](docs/integrations/FEISHU_CN.md)** — 三种模式：**关闭（默认，强烈建议大多数用户保持关闭）**、仅推送（webhook，手机收通知）、双向交互（在飞书里审批/回复）。未配置时零影响
 
   <details>
   <summary>预览：推送卡片（群聊）&amp; 交互对话（私聊）</summary>
@@ -1141,87 +1141,63 @@ Claude Code 读到这些就知道怎么 SSH、激活环境、启动实验。GPT-
 - 代码目录：`/home/YOUR_USERNAME/YOUR_CODE_DIRECTORY/`
 ```
 
-**没有 GPU 服务器？** Review 和改写功能不受影响，只有需要跑实验的修复会被跳过（标记为"需人工跟进"）。
+**没有 GPU 服务器？** Review 和改写功能不受影响，只有需要跑实验的修复会被跳过（标记为"需人工跟进"）。或者按需租 GPU 跑实验，见下方 Vast.ai 集成。
+
+</details>
+
+<details>
+<summary><b>☁️ Vast.ai 按需 GPU（可选）</b></summary>
+
+没 GPU？从 [Vast.ai](https://vast.ai) 按需租。ARIS 分析你的训练任务（模型大小、数据集、时间），找能放下的最便宜 GPU，按**总成本**（不是 $/hr）排序展示，然后租 → 跑 → 收 → 销毁全自动。
+
+在项目 `CLAUDE.md` 加：
+
+```markdown
+## Vast.ai
+- gpu: vast                  # 从 vast.ai 按需租 GPU
+- auto_destroy: true         # 实验跑完自动销毁（默认）
+- max_budget: 5.00           # 可选：估算超过这个数会警告
+```
+
+**📖 完整配置指南 → [docs/integrations/VAST_GPU_GUIDE_CN.md](docs/integrations/VAST_GPU_GUIDE_CN.md)** 包含：
+- 账号 + `vastai` CLI + API key + SSH key 准备工作（5 个步骤）
+- ARIS 如何挑 GPU 并展示实时成本排序表
+- 手动租用：`/vast-gpu`（list / rent / destroy）
+- 典型花费区间（RTX 4090 消融 ~$0.30-2/次，A100/H100 baseline ~$2-10/次）
+- 什么时候用 `gpu: vast` 比 `gpu: remote` / `gpu: local` 更划算
 
 </details>
 
 <details>
 <summary><b>📚 Zotero 集成（可选）</b></summary>
 
-如果你用 [Zotero](https://www.zotero.org/) 管理论文，`/research-lit` 可以搜索你的文献库、读取标注/高亮、导出 BibTeX——全在联网搜索之前完成。
+把 Zotero 文献库接到 `/research-lit` —— 搜索 collections、读标注/高亮、导出 BibTeX，全在联网搜索**之前**完成。推荐 MCP：[zotero-mcp](https://github.com/54yyyu/zotero-mcp)（1.8k⭐，语义搜索 + PDF 标注 + BibTeX 导出）。
 
-**推荐：[zotero-mcp](https://github.com/54yyyu/zotero-mcp)**（1.8k⭐，语义搜索 + PDF 标注 + BibTeX 导出）
+**📖 完整配置指南 → [docs/integrations/ZOTERO_CN.md](docs/integrations/ZOTERO_CN.md)** 包含：
+- `zotero-mcp` 安装（本地 API 适合桌面端，或 Web API）
+- API key + user ID 配置
+- 启用后 `/research-lit` 新增能力（语义搜索、collections、PDF 标注、BibTeX 导出）
+- 配置后新的默认源顺序：Zotero → Obsidian → 本地 PDF → 网络
+- Zotero + Obsidian 组合工作流
 
-```bash
-# 安装
-uv tool install zotero-mcp-server   # 或: pip install zotero-mcp-server
-
-# 添加到 Claude Code（本地 API——需要 Zotero 桌面端运行）
-claude mcp add zotero -s user -- zotero-mcp -e ZOTERO_LOCAL=true
-
-# 或使用 Web API（不需要打开 Zotero）
-claude mcp add zotero -s user -- zotero-mcp \
-  -e ZOTERO_API_KEY=your_key -e ZOTERO_USER_ID=your_id
-```
-
-> API Key 在 https://www.zotero.org/settings/keys 获取
-
-**启用后 `/research-lit` 新增能力：**
-- 🔍 按主题搜索 Zotero 库（含语义/向量搜索）
-- 📂 浏览 Collections 和 Tags
-- 📝 读取你的 PDF 标注和高亮（你个人认为重要的内容）
-- 📄 导出 BibTeX 供论文写作直接使用
-
-**不用 Zotero？** 没关系——`/research-lit` 自动跳过，用本地 PDF + 网络搜索。
+**不用 Zotero？** `/research-lit` 自动跳过，用本地 PDF + 网络搜索。
 
 </details>
 
 <details>
-<summary><b>📓 Obsidian 集成（可选）</b></summary>
+<summary><b>📓 Obsidian + arXiv 集成（可选）</b></summary>
 
-如果你用 [Obsidian](https://obsidian.md/) 做研究笔记，`/research-lit` 可以搜索你的 vault 中的论文总结、带标签的引用和你自己的洞察。
+把 Obsidian vault 接到 `/research-lit` —— 搜索你的笔记、带标签的引用、加工后的洞察（通常比原始论文更有价值）。推荐 MCP：[mcpvault](https://github.com/bitbonsai/mcpvault)（760⭐，不需要打开 Obsidian）。和 Zotero 天然搭配。**arXiv 内置无需配置**，`/research-lit` 会自动查 arXiv API。
 
-**推荐：[mcpvault](https://github.com/bitbonsai/mcpvault)**（760⭐，不需要打开 Obsidian，14 个工具，BM25 搜索）
+**📖 完整配置指南 → [docs/integrations/OBSIDIAN_CN.md](docs/integrations/OBSIDIAN_CN.md)** 包含：
+- `mcpvault` 安装（指向 vault 路径，BM25 搜索，14 个工具）
+- 可选 [obsidian-skills](https://github.com/kepano/obsidian-skills)（13.6k⭐，Obsidian CEO 维护）支持 wikilinks/callouts
+- 启用后 `/research-lit` 新增能力（vault 搜索、tag 过滤、加工后总结、wikilink 遍历）
+- Zotero + Obsidian 组合工作流
+- arXiv 默认行为 + 怎么开启 PDF 下载（`— arxiv download: true`）
+- 独立的 `/arxiv "topic"` 和 `/arxiv 2301.07041 — download`
 
-```bash
-# 添加到 Claude Code（指向你的 vault 路径）
-claude mcp add obsidian-vault -s user -- npx @bitbonsai/mcpvault@latest /path/to/your/vault
-```
-
-**可选补充：[obsidian-skills](https://github.com/kepano/obsidian-skills)**（13.6k⭐，Obsidian CEO 维护）——让 Claude 理解 Obsidian 特有的 Markdown 格式（wikilinks、callouts、properties）：
-
-```bash
-git clone https://github.com/kepano/obsidian-skills.git
-cp -r obsidian-skills/.claude /path/to/your/vault/
-```
-
-**启用后 `/research-lit` 新增能力：**
-- 🔍 搜索 vault 中与研究主题相关的笔记
-- 🏷️ 按标签查找笔记（如 `#paper-review`、`#diffusion-models`）
-- 📝 读取你的加工后总结和洞察（比原始论文更有价值）
-- 🔗 沿 wikilinks 发现相关笔记
-
-**不用 Obsidian？** 没关系——`/research-lit` 自动跳过，照常工作。
-
-> 💡 **Zotero + Obsidian 同时使用**：很多研究者用 Zotero 存论文、Obsidian 记笔记。两个集成可以同时工作——`/research-lit` 先查 Zotero（原始论文 + 标注），再查 Obsidian（加工后笔记），再查本地 PDF，最后搜网络。
-
-#### arXiv 集成
-
-`/research-lit` 自动通过 arXiv API 获取结构化元数据（标题、摘要、完整作者列表、分类），比网页搜索片段更丰富。无需额外配置。
-
-默认只获取元数据（不下载文件）。如需同时下载最相关的 PDF：
-
-```
-/research-lit "topic" — arxiv download: true                    # 下载 top 5 篇 PDF
-/research-lit "topic" — arxiv download: true, max download: 10  # 下载至多 10 篇
-```
-
-也可使用独立的 [`/arxiv`](skills/arxiv/SKILL.md) skill 直接搜索和下载：
-
-```
-/arxiv "attention mechanism"           # 搜索
-/arxiv "2301.07041" — download         # 下载指定论文
-```
+**不用 Obsidian？** `/research-lit` 自动跳过，照常工作。arXiv 不受影响。
 
 </details>
 
@@ -1242,181 +1218,15 @@ cp -r obsidian-skills/.claude /path/to/your/vault/
 | **仅推送** | 关键事件发 webhook 通知，手机收推送，不能回复 | 飞书机器人 webhook URL |
 | **双向交互** | 全双工：在飞书里审批/拒绝 idea、回复 checkpoint | [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) 运行中 |
 
-<details>
-<summary><b>仅推送模式（5 分钟配好）</b></summary>
+**📖 完整配置指南 → [docs/integrations/FEISHU_CN.md](docs/integrations/FEISHU_CN.md)** 包含：
+- **仅推送配置（5 分钟）** —— 建群机器人、复制 webhook URL、丢 `~/.claude/feishu.json`、curl 测试
+- **双向交互配置（15 分钟）** —— 飞书开放平台建应用、5 个必开权限（含极易漏的 `im:message.p2p_msg:readonly`）、`feishu-claude-code` 桥接安装、screen 部署
+- 卡片颜色/内容对照表（Review ≥ 6 → 绿、< 6 → 橙、出错 → 红 等）
+- 哪些 skill 会发通知、每个 skill 的推送 vs 交互 payload
+- 机器人不回复的常见问题排查表
+- 其他 IM 平台（[cc-connect](https://github.com/chenhg5/cc-connect)、[clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu)、[lark-openapi-mcp](https://github.com/larksuite/lark-openapi-mcp)）
 
-群通知，彩色富文本卡片——实验跑完、review 出分、流水线结束，手机收推送就行，不需要回复。
-
-**第 1 步：创建飞书群机器人**
-
-1. 打开你的飞书群（或新建一个测试群）
-2. 群设置 → 群机器人 → 添加机器人 → **自定义机器人**
-3. 起个名字（如 `ARIS Notifications`），复制 **Webhook 地址**
-4. 安全设置：添加自定义关键词 `ARIS`（所有通知都包含这个词），或不设限制
-
-**第 2 步：创建配置文件**
-
-```bash
-cat > ~/.claude/feishu.json << 'EOF'
-{
-  "mode": "push",
-  "webhook_url": "https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_WEBHOOK_ID"
-}
-EOF
-```
-
-**第 3 步：测试**
-
-```bash
-curl -s -X POST "YOUR_WEBHOOK_URL" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "msg_type": "interactive",
-    "card": {
-      "header": {"title": {"tag": "plain_text", "content": "🧪 ARIS Test"}, "template": "blue"},
-      "elements": [{"tag": "markdown", "content": "Push mode working! 🎉"}]
-    }
-  }'
-```
-
-群里应该出现一张蓝色卡片。之后 skill 会在关键事件自动推送富文本卡片：
-
-| 事件 | 卡片颜色 | 内容 |
-|------|---------|------|
-| Review 出分 ≥ 6 | 🟢 绿色 | 分数、结论、主要 weakness |
-| Review 出分 < 6 | 🟠 橙色 | 分数、结论、待修复项 |
-| 实验完成 | 🟢 绿色 | 结果对比表、delta vs baseline |
-| Checkpoint 等待 | 🟡 黄色 | 问题、选项、上下文 |
-| 出错 | 🔴 红色 | 错误信息、建议修复方案 |
-| 流水线结束 | 🟣 紫色 | 分数进展表、最终交付物 |
-
-</details>
-
-<details>
-<summary><b>双向交互模式（15 分钟）</b></summary>
-
-推送模式的全部功能 **加上** 通过飞书私聊与 Claude Code 双向对话。审批/拒绝 idea、回复 checkpoint、给自定义指令——全在手机上完成。
-
-**工作方式**：推送卡片发到**群里**（所有人看到状态），交互对话发到**私聊**（你回复，Claude Code 执行）。
-
-**第 1 步：先完成上面的推送模式配置**（两种模式并存）
-
-**第 2 步：在[飞书开放平台](https://open.feishu.cn/app)创建应用**
-
-1. 点击 **创建企业自建应用** → 填名称（如 `ARIS Claude Bot`）→ 创建
-2. 左侧菜单 → **添加应用能力** → 勾选 **机器人**
-3. 左侧 → **权限管理** → 搜索并开通以下 5 个权限：
-
-| 权限 | Scope | 作用 |
-|------|-------|------|
-| `im:message` | 获取与发送单聊、群组消息 | 核心消息能力 |
-| `im:message:send_as_bot` | 以应用身份发消息 | 机器人回复 |
-| `im:message.group_at_msg:readonly` | 接收群聊中@机器人消息 | 群消息 |
-| `im:message.p2p_msg:readonly` | **读取用户发给机器人的单聊消息** | ⚠️ **极易遗漏！** 不开这个权限，机器人能连上但永远收不到你的私聊消息 |
-| `im:resource` | 获取与上传图片或文件资源 | 图片/文件 |
-
-4. 左侧 → **事件与回调** → 选择 **长连接** 模式 → 添加事件：`im.message.receive_v1` → 保存
-
-> ⚠️ **注意**：长连接页面可能显示"未检测到应用连接信息"——这是正常的。需要先启动桥接服务（第 3 步），再回来保存。
-
-5. 左侧 → **版本管理与发布** → **创建版本** → 填写描述 → **提交审核**
-
-> 个人/测试企业通常秒过审核。
-
-**第 3 步：部署桥接服务**
-
-```bash
-git clone https://github.com/joewongjc/feishu-claude-code.git
-cd feishu-claude-code
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-
-# 配置
-cp .env.example .env
-```
-
-编辑 `.env`：
-
-```bash
-FEISHU_APP_ID=cli_your_app_id          # 凭证与基础信息页面获取
-FEISHU_APP_SECRET=your_app_secret      # 凭证与基础信息页面获取
-DEFAULT_MODEL=claude-opus-4-6          # ⚠️ 默认是 sonnet——改成 opus 效果好很多
-DEFAULT_CWD=/path/to/your/project      # Claude Code 的工作目录
-PERMISSION_MODE=bypassPermissions      # 或 "default"（需手动确认敏感操作）
-```
-
-> ⚠️ **模型很重要**：默认的 `claude-sonnet-4-6` 能用但可能无法理解复杂项目上下文。实测 `claude-opus-4-6` 首次即正确识别了 18 个 ARIS skills，而 sonnet 反复失败。
-
-启动桥接：
-
-```bash
-python main.py
-# 预期输出：
-# ✅ 连接飞书 WebSocket 长连接（自动重连）...
-# [Lark] connected to wss://msg-frontier.feishu.cn/ws/v2?...
-```
-
-长期运行丢 screen 里：
-
-```bash
-screen -dmS feishu-bridge bash -c 'cd /path/to/feishu-claude-code && source .venv/bin/activate && python main.py'
-```
-
-**第 4 步：保存事件配置** — 回到飞书开放平台 → 事件与回调 → 长连接应该显示"已检测到连接"→ **保存**
-
-> 如果在桥接启动前就发布了应用版本，可能需要再创建一个新版本（如 1.0.1）并重新发布。
-
-**第 5 步：测试私聊**
-
-1. 在飞书里搜索机器人名称，打开私聊
-2. 发送：`你好`
-3. 机器人应通过 Claude Code 回复
-
-**如果机器人不回复**：发 `/new` 重置 session，再试一次。常见问题：
-
-| 症状 | 原因 | 解决 |
-|------|------|------|
-| 机器人连上了但收不到消息 | 缺少 `im:message.p2p_msg:readonly` 权限 | 开通权限 → 创建新版本 → 发布 |
-| 机器人回复但不认识你的项目 | `DEFAULT_CWD` 指向错误目录 | 修改 `.env` → 重启桥接 |
-| 机器人回复但不够聪明 | 使用的是 `claude-sonnet-4-6` | 改为 `claude-opus-4-6` → 重启桥接 |
-| 旧 session 上下文过时 | 修改配置前的 session 被缓存 | 在聊天中发 `/new` 开始新 session |
-| 保存事件时"未检测到连接" | 桥接服务还没启动 | 先启动桥接，再保存事件配置 |
-
-**第 6 步：更新 ARIS 配置**
-
-```bash
-cat > ~/.claude/feishu.json << 'EOF'
-{
-  "mode": "interactive",
-  "webhook_url": "https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_WEBHOOK_ID",
-  "interactive": {
-    "bridge_url": "http://localhost:5000",
-    "timeout_seconds": 300
-  }
-}
-EOF
-```
-
-现在 skill 会：
-- **推送**富文本卡片到群里（状态通知，所有人可见）
-- **私聊**你做决策（checkpoint 审批、继续/停止、自定义指令）
-
-#### 哪些 skill 会发通知？
-
-| Skill | 事件 | 推送模式 | 交互模式 |
-|-------|------|----------|----------|
-| `/auto-review-loop` | 每轮出分、循环结束 | 分数 + 结论 | + 等你决定继续/停止 |
-| `/auto-paper-improvement-loop` | 每轮出分、全部完成 | 分数进展表 | 分数进展表 |
-| `/run-experiment` | 实验已部署 | GPU 分配 + 预计时间 | GPU 分配 + 预计时间 |
-| `/monitor-experiment` | 结果已收集 | 结果对比表 | 结果对比表 |
-| `/idea-discovery` | 阶段切换、最终报告 | 各阶段摘要 | + 审批/拒绝 |
-| `/research-pipeline` | 阶段切换、流水线结束 | 阶段摘要 | + 审批/拒绝 |
-
-</details>
-
-**不用飞书？** 没关系——没有 `~/.claude/feishu.json` 文件时，所有 skill 行为完全不变。零开销，零副作用。
-
-> 💡 **其他 IM 平台**：推送模式的 webhook 模式适用于任何支持 incoming webhook 的服务（Slack、Discord、钉钉、企业微信）。只需改 `webhook_url` 和卡片格式。双向交互可参考 [cc-connect](https://github.com/chenhg5/cc-connect)（多平台桥接）或 [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu)。
+**不用飞书？** 没有 `~/.claude/feishu.json` 文件时，所有 skill 行为完全不变。零开销，零副作用。
 
 </details>
 
@@ -1646,11 +1456,11 @@ ARIS 的灵感来自：
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — Anthropic 的 Claude CLI，执行层骨干
 - [Codex CLI](https://github.com/openai/codex) — OpenAI 的 CLI，作为 MCP server 实现跨模型审稿
 
-**Zotero 集成**（[安装指南](#-zotero-集成可选)）
+**Zotero 集成**（[安装指南](docs/integrations/ZOTERO_CN.md)）
 - [zotero-mcp](https://github.com/54yyyu/zotero-mcp) — Zotero MCP server，语义搜索 + PDF 标注
 - [Zotero](https://www.zotero.org/) — 开源文献管理器
 
-**Obsidian 集成**（[安装指南](#-obsidian-集成可选)）
+**Obsidian 集成**（[安装指南](docs/integrations/OBSIDIAN_CN.md)）
 - [mcpvault](https://github.com/bitbonsai/mcpvault) — Obsidian vault MCP server（不需要打开 Obsidian）
 - [obsidian-skills](https://github.com/kepano/obsidian-skills) — Obsidian CEO Steph Ango 维护的 Claude Code skills
 
@@ -1659,7 +1469,7 @@ ARIS 的灵感来自：
 - [Research-Paper-Writing-Skills](https://github.com/Master-cai/Research-Paper-Writing-Skills) — 论文写作 skill 模板
 - [baoyu-skills](https://github.com/jimliu/baoyu-skills) — Claude Code skills 合集
 
-**飞书集成**（[安装指南](#-飞书lark-集成可选)）
+**飞书集成**（[安装指南](docs/integrations/FEISHU_CN.md)）
 - [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) — 飞书 ↔ Claude Code 双向桥接
 - [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu) — 飞书 Claude 机器人
 - [cc-connect](https://github.com/chenhg5/cc-connect) — 多平台消息桥接

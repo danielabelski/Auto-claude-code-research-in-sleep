@@ -206,9 +206,9 @@ Two outputs: `PASTE_READY.txt` (exact char count, paste to venue) + `REBUTTAL_DR
 - **2026-03-15** — 🔀 **Bring your own model!** [Any OpenAI-compatible API](#-alternative-model-combinations) now works as reviewer via [`llm-chat`](mcp-servers/llm-chat/) MCP server. GLM, MiniMax, Kimi, LongCat, DeepSeek all tested — **zero Claude or OpenAI API needed**
 - **2026-03-15** — 🐾 **[OpenClaw adaptation guide](docs/OPENCLAW_ADAPTATION.md)** — use ARIS research workflows in [OpenClaw](https://github.com/All-Hands-AI/OpenHands) without Claude Code slash skills
 - **2026-03-15** — 📐 **[`proof-writer`](skills/proof-writer/SKILL.md)** — community skill for rigorous theorem proof drafting. 📚 **Anti-hallucination citations** — `/paper-write` now fetches real BibTeX from [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org) instead of LLM-generated entries — on by default, zero install
-- **2026-03-14** — 📱 [Feishu/Lark integration](#-feishulark-integration-optional): three modes (off/push/interactive), mobile notifications for experiments, reviews, and checkpoints
+- **2026-03-14** — 📱 [Feishu/Lark integration](docs/integrations/FEISHU.md): three modes (off/push/interactive), mobile notifications for experiments, reviews, and checkpoints
 - **2026-03-13** — 🛑 Human-in-the-loop: configurable `AUTO_PROCEED` checkpoints across all workflows. Full autopilot or step-by-step approval
-- **2026-03-12** — 🔗 [Zotero](#-zotero-integration-optional) + [Obsidian](#-obsidian-integration-optional) + local PDFs + arXiv/Scholar: multi-source literature search with cross-model novelty verification
+- **2026-03-12** — 🔗 [Zotero](docs/integrations/ZOTERO.md) + [Obsidian](docs/integrations/OBSIDIAN.md) + local PDFs + arXiv/Scholar: multi-source literature search with cross-model novelty verification
 - **2026-03-12** — 🚀 Three end-to-end workflows complete: one prompt → top-venue-style paper. `/research-pipeline` chains idea discovery → auto review → paper writing autonomously
 - **2026-03-12** — 📝 `/paper-writing` workflow: narrative report → structured outline → figures → LaTeX → compiled PDF → 2-round auto-improvement (4/10 → 8.5/10)
 
@@ -358,7 +358,7 @@ See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model comb
 ## ✨ Features
 
 - 📊 **31 composable skills** — mix and match, or chain into full pipelines (`/idea-discovery`, `/auto-review-loop`, `/paper-writing`, `/research-pipeline`)
-- 🔍 **Literature & novelty** — multi-source paper search (**[Zotero](#-zotero-integration-optional)** + **[Obsidian](#-obsidian-integration-optional)** + **local PDFs** + arXiv/Scholar) + cross-model novelty verification
+- 🔍 **Literature & novelty** — multi-source paper search (**[Zotero](docs/integrations/ZOTERO.md)** + **[Obsidian](docs/integrations/OBSIDIAN.md)** + **local PDFs** + arXiv/Scholar) + cross-model novelty verification
 - 💡 **Idea discovery** — literature survey → brainstorm 8-12 ideas → novelty check → GPU pilot experiments → ranked report
 - 🔄 **Auto review loop** — 4-round autonomous review, 5/10 → 7.5/10 overnight with 20+ GPU experiments
 - 📝 **Paper writing** — narrative → outline → figures → LaTeX → PDF → auto-review (4/10 → 8.5/10), one command. Anti-hallucination citations via [DBLP](https://dblp.org)/[CrossRef](https://www.crossref.org)
@@ -367,7 +367,7 @@ See [full setup guide](#%EF%B8%8F-setup) for details and [alternative model comb
 - 🖥️ **Review-driven experiments** — when GPT-5.4 says "run an ablation", Claude Code automatically writes the script, rsyncs to your GPU server, launches in screen, collects results, and folds them back into the paper. Just configure your server in `CLAUDE.md` ([setup guide](#%EF%B8%8F-gpu-server-setup-for-auto-experiments)). **No GPU?** Use `gpu: vast` to rent one from [Vast.ai](https://vast.ai) on demand
 - 🔀 **Flexible models** — default Claude × GPT-5.4, also supports [GLM, MiniMax, Kimi, LongCat, DeepSeek, etc.](#-alternative-model-combinations) — no Claude or OpenAI API required
 - 🛑 **Human-in-the-loop** — configurable checkpoints at key decisions. `AUTO_PROCEED=true` for full autopilot, `false` to approve each step
-- 📱 **[Feishu/Lark notifications](#-feishulark-integration-optional)** — three modes: **off (default, strongly recommended for most users)**, push-only (webhook, mobile alerts), interactive (approve/reject from Feishu). Zero impact when unconfigured
+- 📱 **[Feishu/Lark notifications](docs/integrations/FEISHU.md)** — three modes: **off (default, strongly recommended for most users)**, push-only (webhook, mobile alerts), interactive (approve/reject from Feishu). Zero impact when unconfigured
 
   <details>
   <summary>Preview: Push cards (group) &amp; Interactive chat (private)</summary>
@@ -1477,35 +1477,10 @@ If you are already on the GPU server, you can add the following to your `CLAUDE.
 
 #### Option C: Vast.ai On-Demand GPU (`gpu: vast`)
 
-No GPU? Rent one from [Vast.ai](https://vast.ai) on demand. ARIS **analyzes your training task** (model size, dataset, estimated time), searches for the cheapest GPU that fits, and presents options with **estimated total cost** — not just $/hr. After you pick, it handles everything: rent → setup → run → collect results → destroy.
+No GPU? Rent one from [Vast.ai](https://vast.ai) on demand. ARIS analyzes your training task (model size, dataset, time), finds the cheapest GPU that fits, ranks options by **total cost** (not just $/hr), then rents → runs → collects → destroys automatically.
 
-**Prerequisites:**
+Drop this in `CLAUDE.md`:
 
-1. **Create a Vast.ai account** at https://cloud.vast.ai/ and add billing (credit card or crypto)
-
-2. **Install the `vastai` CLI** (requires **Python ≥ 3.10**):
-   ```bash
-   pip install vastai
-   ```
-   If your Python is older (check with `python --version`), use a virtual environment with Python ≥ 3.10 (e.g., `conda create`, `pyenv`, `uv venv`, etc.).
-
-3. **Set your API key** — get it from https://cloud.vast.ai/cli/:
-   ```bash
-   vastai set api-key YOUR_API_KEY
-   ```
-
-4. **Upload your SSH public key** at https://cloud.vast.ai/manage-keys/ — this is **required before renting any instance** (keys are baked in at creation time). If you don't have one:
-   ```bash
-   ssh-keygen -t ed25519 -C "your_email@example.com"
-   cat ~/.ssh/id_ed25519.pub   # copy this to Vast.ai
-   ```
-
-5. **Verify setup** — test that search works:
-   ```bash
-   vastai search offers 'gpu_ram>=24 reliability>0.95' -o 'dph+' --limit 3
-   ```
-
-**Add to `CLAUDE.md`:**
 ```markdown
 ## Vast.ai
 - gpu: vast                  # rent on-demand GPU from vast.ai
@@ -1513,16 +1488,12 @@ No GPU? Rent one from [Vast.ai](https://vast.ai) on demand. ARIS **analyzes your
 - max_budget: 5.00           # optional: warn if estimated cost exceeds this
 ```
 
-That's it — no GPU model or hardware config needed. When you run `/run-experiment`, ARIS reads your experiment scripts/plan, estimates VRAM and training time, and presents options like:
-
-```
-| # | GPU       | VRAM  | $/hr  | Est. Hours | Est. Total | Offer ID |
-|---|-----------|-------|-------|------------|------------|----------|
-| 1 | RTX 4090  | 24 GB | $0.28 | ~4h        | ~$1.12     | 6995713  |  ← best value
-| 2 | A100 SXM  | 80 GB | $0.95 | ~2h        | ~$1.90     | 7023456  |  ← fastest
-```
-
-Pick a number and it handles the rest. Use `/vast-gpu` directly for manual control.
+**📖 Full setup guide → [docs/integrations/VAST_GPU_GUIDE.md](docs/integrations/VAST_GPU_GUIDE.md)** covers:
+- Account + `vastai` CLI install + API key + SSH key prerequisites (5 steps)
+- How ARIS picks GPUs and shows a live cost-ranked table
+- Manual rental via `/vast-gpu` (list / rent / destroy)
+- Typical cost expectations (~$0.30-2 for ablations on RTX 4090, ~$2-10 for A100/H100 baselines)
+- When `gpu: vast` is preferable to `gpu: remote` / `gpu: local`
 
 **No server at all?** The review and rewriting skills still work without GPU access. Only experiment-related fixes will be skipped (flagged for manual follow-up).
 
@@ -1531,80 +1502,33 @@ Pick a number and it handles the rest. Use `/vast-gpu` directly for manual contr
 <details>
 <summary><b>📚 Zotero Integration (Optional)</b></summary>
 
-If you use [Zotero](https://www.zotero.org/) to manage your paper library, `/research-lit` can search your collections, read your annotations/highlights, and export BibTeX — all before searching the web.
+Connect your Zotero library to `/research-lit` — search collections, read your annotations/highlights, export BibTeX, all **before** web search. Recommended MCP: [zotero-mcp](https://github.com/54yyyu/zotero-mcp) (1.8k⭐, semantic search + PDF annotations + BibTeX export).
 
-**Recommended: [zotero-mcp](https://github.com/54yyyu/zotero-mcp)** (1.8k⭐, semantic search, PDF annotations, BibTeX export)
+**📖 Full setup guide → [docs/integrations/ZOTERO.md](docs/integrations/ZOTERO.md)** covers:
+- `zotero-mcp` install (Local API for desktop, or Web API)
+- API key + user ID setup
+- What it enables in `/research-lit` (semantic search, collections, PDF annotations, BibTeX export)
+- New default source order: Zotero → Obsidian → local PDFs → web
+- Combined Zotero + Obsidian workflow
 
-```bash
-# Install
-uv tool install zotero-mcp-server   # or: pip install zotero-mcp-server
-
-# Add to Claude Code (Local API — requires Zotero desktop running)
-claude mcp add zotero -s user -- zotero-mcp -e ZOTERO_LOCAL=true
-
-# Or use Web API (works without Zotero running)
-claude mcp add zotero -s user -- zotero-mcp \
-  -e ZOTERO_API_KEY=your_key -e ZOTERO_USER_ID=your_id
-```
-
-> Get your API key at https://www.zotero.org/settings/keys
-
-**What it enables in `/research-lit`:**
-- 🔍 Search your Zotero library by topic (including semantic/vector search)
-- 📂 Browse collections and tags
-- 📝 Read your PDF annotations and highlights (what you personally found important)
-- 📄 Export BibTeX for direct use in paper writing
-
-**Not using Zotero?** No problem — `/research-lit` automatically skips Zotero and uses local PDFs + web search instead.
+**Not using Zotero?** `/research-lit` auto-skips and uses local PDFs + web search instead.
 
 </details>
 
 <details>
-<summary><b>📓 Obsidian Integration (Optional)</b></summary>
+<summary><b>📓 Obsidian + arXiv Integration (Optional)</b></summary>
 
-If you use [Obsidian](https://obsidian.md/) for research notes, `/research-lit` can search your vault for paper summaries, tagged references, and your own insights.
+Connect your Obsidian vault to `/research-lit` — search your notes, tagged references, and processed insights (often more valuable than raw papers). Recommended MCP: [mcpvault](https://github.com/bitbonsai/mcpvault) (760⭐, no Obsidian app needed). Pairs with Zotero. **arXiv access is built-in — no setup needed**, `/research-lit` queries the arXiv API automatically.
 
-**Recommended: [mcpvault](https://github.com/bitbonsai/mcpvault)** (760⭐, no Obsidian app needed, 14 tools, BM25 search)
+**📖 Full setup guide → [docs/integrations/OBSIDIAN.md](docs/integrations/OBSIDIAN.md)** covers:
+- `mcpvault` install (point to vault path, BM25 search, 14 tools)
+- Optional [obsidian-skills](https://github.com/kepano/obsidian-skills) (13.6k⭐, by Obsidian CEO) for wikilinks/callouts
+- What it enables in `/research-lit` (vault search, tag filter, processed summaries, wikilink traversal)
+- Combined Zotero + Obsidian workflow
+- arXiv defaults + how to enable PDF download (`— arxiv download: true`)
+- Standalone `/arxiv "topic"` and `/arxiv 2301.07041 — download`
 
-```bash
-# Add to Claude Code (point to your vault path)
-claude mcp add obsidian-vault -s user -- npx @bitbonsai/mcpvault@latest /path/to/your/vault
-```
-
-**Optional complement: [obsidian-skills](https://github.com/kepano/obsidian-skills)** (13.6k⭐, by Obsidian CEO) — teaches Claude to understand Obsidian-specific Markdown (wikilinks, callouts, properties). Copy to your vault:
-
-```bash
-git clone https://github.com/kepano/obsidian-skills.git
-cp -r obsidian-skills/.claude /path/to/your/vault/
-```
-
-**What it enables in `/research-lit`:**
-- 🔍 Search your vault for notes on the research topic
-- 🏷️ Find notes by tags (e.g., `#paper-review`, `#diffusion-models`)
-- 📝 Read your processed summaries and insights (more valuable than raw papers)
-- 🔗 Follow wikilinks to discover related notes
-
-**Not using Obsidian?** No problem — `/research-lit` automatically skips Obsidian and works as before.
-
-> 💡 **Zotero + Obsidian together**: Many researchers use Zotero for paper storage and Obsidian for notes. Both integrations work simultaneously — `/research-lit` checks Zotero first (raw papers + annotations), then Obsidian (your processed notes), then local PDFs, then web search.
-
-#### arXiv Integration
-
-`/research-lit` automatically queries the arXiv API for structured metadata (title, abstract, full author list, categories) — richer than web search snippets. No setup required.
-
-By default, only metadata is fetched (no files downloaded). To also download the most relevant PDFs:
-
-```
-/research-lit "topic" — arxiv download: true              # download top 5 PDFs
-/research-lit "topic" — arxiv download: true, max download: 10  # download up to 10
-```
-
-For standalone arXiv access, use the dedicated [`/arxiv`](skills/arxiv/SKILL.md) skill:
-
-```
-/arxiv "attention mechanism"           # search
-/arxiv "2301.07041" — download         # download specific paper
-```
+**Not using Obsidian?** `/research-lit` auto-skips and works as before. arXiv stays on regardless.
 
 </details>
 
@@ -1617,7 +1541,7 @@ Get mobile notifications when experiments finish, reviews score, or checkpoints 
 |:-:|:-:|
 | <img src="assets/feishu_push.png" width="450" /> | <img src="assets/feishu_interactive.jpg" width="450" /> |
 
-**Three modes — you choose per-project:**
+**Three modes — choose per-project:**
 
 | Mode | What happens | You need |
 |------|-------------|----------|
@@ -1625,182 +1549,15 @@ Get mobile notifications when experiments finish, reviews score, or checkpoints 
 | **Push only** | Webhook notifications at key events. Mobile push, no reply | Feishu bot webhook URL |
 | **Interactive** | Full bidirectional. Approve/reject ideas, reply to checkpoints from Feishu | [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) running |
 
-<details>
-<summary><b>Push Only Setup (5 min)</b></summary>
+**📖 Full setup guide → [docs/integrations/FEISHU.md](docs/integrations/FEISHU.md)** covers:
+- **Push-only setup (5 min)** — create a group bot, copy the webhook URL, drop `~/.claude/feishu.json`, test with a curl
+- **Interactive setup (15 min)** — Feishu Open Platform app, the 5 required permissions (incl. the easy-to-miss `im:message.p2p_msg:readonly`), `feishu-claude-code` bridge install, `screen` deployment
+- Card color/content table (Review ≥ 6 → green, < 6 → orange, error → red, etc.)
+- Which skills send notifications, push vs. interactive payload per skill
+- Common bot-doesn't-reply troubleshooting table
+- Alternative IM platforms ([cc-connect](https://github.com/chenhg5/cc-connect), [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu), [lark-openapi-mcp](https://github.com/larksuite/lark-openapi-mcp))
 
-Group notifications with rich cards — experiment done, review scored, pipeline complete. Mobile push, no reply needed.
-
-**Step 1: Create a Feishu group bot**
-
-1. Open your Feishu group (or create a test group)
-2. Group Settings → Bots → Add Bot → **Custom Bot**
-3. Name it (e.g., `ARIS Notifications`), copy the **Webhook URL**
-4. Security: add custom keyword `ARIS` (all notifications include this word), or leave unrestricted
-
-**Step 2: Create config file**
-
-```bash
-cat > ~/.claude/feishu.json << 'EOF'
-{
-  "mode": "push",
-  "webhook_url": "https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_WEBHOOK_ID"
-}
-EOF
-```
-
-**Step 3: Test it**
-
-```bash
-curl -s -X POST "YOUR_WEBHOOK_URL" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "msg_type": "interactive",
-    "card": {
-      "header": {"title": {"tag": "plain_text", "content": "🧪 ARIS Test"}, "template": "blue"},
-      "elements": [{"tag": "markdown", "content": "Push mode working! 🎉"}]
-    }
-  }'
-```
-
-You should see a blue card in your group. Skills will now automatically send rich cards at key events:
-
-| Event | Card color | Content |
-|-------|-----------|---------|
-| Review scored ≥ 6 | 🟢 Green | Score, verdict, top weaknesses |
-| Review scored < 6 | 🟠 Orange | Score, verdict, action items |
-| Experiment complete | 🟢 Green | Results table, delta vs baseline |
-| Checkpoint waiting | 🟡 Yellow | Question, options, context |
-| Error | 🔴 Red | Error message, suggested fix |
-| Pipeline done | 🟣 Purple | Score progression, deliverables |
-
-</details>
-
-<details>
-<summary><b>Interactive Setup (15 min)</b></summary>
-
-Everything Push mode does, **plus** bidirectional private chat with Claude Code via Feishu. Approve/reject ideas, reply to checkpoints, give custom instructions — all from your phone.
-
-**How it works**: Push cards go to the **group** (everyone sees status). Interactive conversations happen in **private chat** with the bot (you reply, Claude Code acts on it).
-
-**Step 1: Complete Push setup above first** (you'll keep both)
-
-**Step 2: Create a Feishu app on [open.feishu.cn](https://open.feishu.cn/app)**
-
-1. Click **Create Enterprise App** → name it (e.g., `ARIS Claude Bot`) → create
-2. Left menu → **Add Capabilities** → check **Bot**
-3. Left menu → **Permissions** → search and enable these 5 permissions:
-
-| Permission | Scope | Why |
-|-----------|-------|-----|
-| `im:message` | Send & receive messages | Core messaging |
-| `im:message:send_as_bot` | Send as bot | Bot replies |
-| `im:message.group_at_msg:readonly` | Receive group @mentions | Group messages |
-| `im:message.p2p_msg:readonly` | **Receive private messages** | ⚠️ **Easy to miss!** Without this, the bot connects but never receives your messages |
-| `im:resource` | Access attachments | Images/files |
-
-4. Left menu → **Events & Callbacks** → select **Long Connection** mode → add event: `im.message.receive_v1` → save
-
-> ⚠️ **Important**: The "Long Connection" page may show "未检测到应用连接信息" — this is normal. You need to start the bridge first (Step 3), then come back and save.
-
-5. Left menu → **Version Management** → **Create Version** → fill description → **Submit for Review**
-
-> For personal/test Feishu organizations, approval is usually instant.
-
-**Step 3: Deploy the bridge**
-
-```bash
-git clone https://github.com/joewongjc/feishu-claude-code.git
-cd feishu-claude-code
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-
-# Configure
-cp .env.example .env
-```
-
-Edit `.env`:
-
-```bash
-FEISHU_APP_ID=cli_your_app_id          # From app credentials page
-FEISHU_APP_SECRET=your_app_secret      # From app credentials page
-DEFAULT_MODEL=claude-opus-4-6          # ⚠️ Default is sonnet — change to opus for best results
-DEFAULT_CWD=/path/to/your/project      # Working directory for Claude Code
-PERMISSION_MODE=bypassPermissions      # Or "default" for safer mode
-```
-
-> ⚠️ **Model matters**: The default `claude-sonnet-4-6` works but may struggle with complex project context. `claude-opus-4-6` correctly identified 18 ARIS skills on first try where sonnet could not.
-
-Start the bridge:
-
-```bash
-python main.py
-# Expected output:
-# ✅ 连接飞书 WebSocket 长连接（自动重连）...
-# [Lark] connected to wss://msg-frontier.feishu.cn/ws/v2?...
-```
-
-For long-running use, put it in a screen session:
-
-```bash
-screen -dmS feishu-bridge bash -c 'cd /path/to/feishu-claude-code && source .venv/bin/activate && python main.py'
-```
-
-**Step 4: Save event config** — Go back to Feishu Open Platform → Events & Callbacks → the long connection should now show "已检测到连接" → **Save**
-
-> If you published the app version before the bridge was running, you may need to create a new version (e.g., 1.0.1) and re-publish after saving event config.
-
-**Step 5: Test private chat**
-
-1. In Feishu, find the bot in your contacts (search by app name)
-2. Send it a message: `你好`
-3. It should reply via Claude Code
-
-**If the bot doesn't reply**: Send `/new` to reset the session, then try again. Common issues:
-
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| Bot connects but never receives messages | Missing `im:message.p2p_msg:readonly` permission | Add permission → create new version → publish |
-| Bot replies but doesn't know your project | `DEFAULT_CWD` points to wrong directory | Edit `.env` → restart bridge |
-| Bot replies but seems less capable | Using `claude-sonnet-4-6` | Change to `claude-opus-4-6` in `.env` → restart |
-| Old session has stale context | Session cached from before config change | Send `/new` in chat to start fresh session |
-| "未检测到应用连接信息" when saving events | Bridge not running yet | Start bridge first, then save event config |
-
-**Step 6: Update ARIS config**
-
-```bash
-cat > ~/.claude/feishu.json << 'EOF'
-{
-  "mode": "interactive",
-  "webhook_url": "https://open.feishu.cn/open-apis/bot/v2/hook/YOUR_WEBHOOK_ID",
-  "interactive": {
-    "bridge_url": "http://localhost:5000",
-    "timeout_seconds": 300
-  }
-}
-EOF
-```
-
-Now skills will:
-- **Push** rich cards to the group (status notifications, everyone sees)
-- **Private chat** you for decisions (checkpoints, approve/reject, custom instructions)
-
-#### Which skills send notifications?
-
-| Skill | Events | Push | Interactive |
-|-------|--------|------|-------------|
-| `/auto-review-loop` | Review scored (each round), loop complete | Score + verdict | + wait for continue/stop |
-| `/auto-paper-improvement-loop` | Review scored, all rounds done | Score progression | Score progression |
-| `/run-experiment` | Experiments deployed | GPU assignment + ETA | GPU assignment + ETA |
-| `/vast-gpu` | Instance rented/destroyed | Instance ID + cost | Instance ID + cost |
-| `/monitor-experiment` | Results collected | Results table | Results table |
-| `/idea-discovery` | Phase transitions, final report | Summary at each phase | + approve/reject at checkpoints |
-| `/research-pipeline` | Stage transitions, pipeline done | Stage summary | + approve/reject |
-
-</details>
-
-**Not using Feishu?** No problem — without `~/.claude/feishu.json`, all skills behave exactly as before. Zero overhead, zero side effects.
-
-> 💡 **Alternative IM platforms**: The push-only webhook pattern works with any service that accepts incoming webhooks (Slack, Discord, DingTalk, WeChat Work). Just change the `webhook_url` and card format in `feishu-notify/SKILL.md`. For bidirectional support, see [cc-connect](https://github.com/chenhg5/cc-connect) (multi-platform bridge) or [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu).
+**Not using Feishu?** Without `~/.claude/feishu.json`, all skills behave exactly as before. Zero overhead, zero side effects.
 
 </details>
 
@@ -2031,11 +1788,11 @@ This project builds on and integrates with many excellent open-source projects:
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — Anthropic's CLI for Claude, the execution backbone
 - [Codex CLI](https://github.com/openai/codex) — OpenAI's CLI, used as MCP server for cross-model review
 
-**Zotero Integration** ([setup guide](#-zotero-integration-optional))
+**Zotero Integration** ([setup guide](docs/integrations/ZOTERO.md))
 - [zotero-mcp](https://github.com/54yyyu/zotero-mcp) — Zotero MCP server with semantic search and PDF annotations
 - [Zotero](https://www.zotero.org/) — Open-source reference manager
 
-**Obsidian Integration** ([setup guide](#-obsidian-integration-optional))
+**Obsidian Integration** ([setup guide](docs/integrations/OBSIDIAN.md))
 - [mcpvault](https://github.com/bitbonsai/mcpvault) — Obsidian vault MCP server (no app required)
 - [obsidian-skills](https://github.com/kepano/obsidian-skills) — Claude Code skills for Obsidian Markdown by Steph Ango (Obsidian CEO)
 
@@ -2044,7 +1801,7 @@ This project builds on and integrates with many excellent open-source projects:
 - [Research-Paper-Writing-Skills](https://github.com/Master-cai/Research-Paper-Writing-Skills) — Paper writing skill templates
 - [baoyu-skills](https://github.com/jimliu/baoyu-skills) — Claude Code skills collection
 
-**Feishu/Lark Integration** ([setup guide](#-feishulark-integration-optional))
+**Feishu/Lark Integration** ([setup guide](docs/integrations/FEISHU.md))
 - [feishu-claude-code](https://github.com/joewongjc/feishu-claude-code) — Bidirectional Feishu ↔ Claude Code bridge
 - [clawdbot-feishu](https://github.com/m1heng/clawdbot-feishu) — Feishu bot for Claude
 - [cc-connect](https://github.com/chenhg5/cc-connect) — Multi-platform messaging bridge
