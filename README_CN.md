@@ -1266,13 +1266,14 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 | `WANDB` | false | 自动给实验脚本加 W&B 日志 | → `experiment-bridge` → `run-experiment` |
 | `CODE_REVIEW` | true | GPT-5.4 部署前审查实验代码 | → `experiment-bridge` |
 | `BASE_REPO` | false | GitHub 仓库 URL，克隆作为实验基础代码 | → `experiment-bridge` |
+| `GPU` | `local` | GPU 目标：`local`、`remote`（SSH）、或 `vast`（[Vast.ai](https://vast.ai) 按需租用） | → `experiment-bridge` → `run-experiment` |
 | `COMPACT` | false | 生成精简摘要文件，适合短 context 模型和 session 恢复 | → 所有工作流 |
 | `REF_PAPER` | false | 参考论文（PDF 或 URL），先总结再基于它找 idea | → `idea-discovery` |
 | `ILLUSTRATION` | `gemini` | AI 作图：`gemini`（默认，需 API key）、`mermaid`（免费）、`false`（跳过） | → `paper-writing` |
 
 </details>
 
-### 自动 Review 循环（`auto-review-loop`)
+### 自动 Review 循环（`auto-review-loop`）
 
 调停止条件：review→修复 轮数上限、判定"可投稿"的分数阈值、超过哪个 GPU-小时预算的实验自动标记为需人工跟进。
 
@@ -1407,7 +1408,7 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 - **方案 B** 或 **方案 E** —— 不用 Claude、不用 OpenAI API（方案 E 通过 ModelScope 免费）。
 - **方案 C** 或 **方案 D** —— OpenAI 兼容 API 自由混搭（方案 D 用阿里一个 Key 跑双端）。
 - **方案 G** 或 **方案 I** —— 保留 Codex 作为执行者，只换审稿人（Claude 或 Gemini）。
-- **方案 H** —— 用 Antigravity 作为执行器（Claude Opus 4.6 或 Gemini 3.1 Pro），GPT-5.4 审稿。
+- **方案 H** —— 用 Antigravity 作为执行器（Claude Opus 4.6 或 Gemini 3.1 Pro），GPT-5.4 或任意 `llm-chat` 审稿。
 
 \* 方案 G 通常依赖本地 Codex CLI 和 Claude Code CLI 的登录态；不强制要求 API key。
 
@@ -1430,7 +1431,7 @@ Skills 就是普通的 Markdown 文件，fork 后随意改：
 
 ### 方案 A: GLM + GPT
 
-只替换执行者（Claude → 通过 Z.ai 切到 GLM），保留 GPT-5.4 通过 Codex MCP 审稿。Codex CLI 复用你已有的 `OPENAI_API_KEY`，审稿端不需要额外配置。
+只替换执行者（Claude → 通过 Z.ai 切到 GLM），保留 GPT-5.4 通过 Codex MCP 审稿。Codex CLI 复用你已有的 `OPENAI_API_KEY`（来自 `~/.codex/config.toml` 或环境变量），审稿端不需要额外配置。
 
 <details>
 <summary><b>展开方案 A 的安装命令与 <code>~/.claude/settings.json</code></b></summary>
@@ -1476,7 +1477,7 @@ codex setup   # 提示选模型时选 gpt-5.5
 
 ### 配置完成后：安装 Skills 并验证
 
-推荐用上面 [§ 安装 Skills](#install-skills) 的项目级 symlink 安装——所有方案通用。下面的全局拷贝是 fallback，如果你更习惯把所有 skill 放到 `~/.claude/skills/` 也行。
+推荐用上面 [§ 安装 Skills](#安装-skills) 的项目级 symlink 安装——所有方案通用。下面的全局拷贝是 fallback，如果你更习惯把所有 skill 放到 `~/.claude/skills/` 也行。
 
 <details>
 <summary><b>展开全局拷贝 fallback 安装命令与非 Claude 执行者的验证 prompt</b></summary>
@@ -1488,7 +1489,7 @@ cp -r skills/* ~/.claude/skills/
 claude
 ```
 
-> **⚠️ 非 Claude 执行者（GLM、Kimi 等）：** 需要让模型先读一遍项目，确保 skill 能正确解析。尤其是当你已经改写了 skill 以使用不同的审查器 MCP（如 `mcp__llm-chat__chat` 替代 `mcp__codex__codex`）时——新执行器需要理解变更后的工具调用方式：
+> **⚠️ 非 Claude 执行者（GLM、Kimi 等）：** 需要让模型先读一遍项目，确保 skill 能正确解析。尤其是当你已经[改写了 skill](#-替代模型组合)以使用不同的审查器 MCP（如 `mcp__llm-chat__chat` 替代 `mcp__codex__codex`）时——新执行器需要理解变更后的工具调用方式：
 >
 > ```
 > 读一下这个项目，验证所有 skills 是否正常：

@@ -1737,7 +1737,7 @@ Don't have Claude / OpenAI API access? You can swap in other models — same cro
 - **Alt B** or **Alt E** — no Claude API, no OpenAI API (Alt E is free via ModelScope).
 - **Alt C** or **Alt D** — OpenAI-compatible mix-and-match (Alt D = one Alibaba key for both sides).
 - **Alt G** or **Alt I** — Codex stays as executor, only the reviewer changes (Claude or Gemini).
-- **Alt H** — Antigravity as the executor (Claude Opus 4.6 or Gemini 3.1 Pro), GPT-5.4 reviewer.
+- **Alt H** — Antigravity as the executor (Claude Opus 4.6 or Gemini 3.1 Pro), GPT-5.4 or any `llm-chat` reviewer.
 
 \* Alt G normally relies on local Codex CLI and Claude Code CLI logins. Direct API keys are optional, not required.
 
@@ -1760,7 +1760,7 @@ Don't have Claude / OpenAI API access? You can swap in other models — same cro
 
 ### Alt A: GLM + GPT
 
-Only replace the executor (Claude → GLM via Z.ai), keep GPT-5.4 as reviewer via Codex MCP. Codex CLI reuses your existing `OPENAI_API_KEY`; no extra reviewer-side config.
+Only replace the executor (Claude → GLM via Z.ai), keep GPT-5.4 as reviewer via Codex MCP. Codex CLI reuses your existing `OPENAI_API_KEY` (from `~/.codex/config.toml` or environment); no extra reviewer-side config.
 
 <details>
 <summary><b>Show Alt A setup commands and <code>~/.claude/settings.json</code></b></summary>
@@ -1818,7 +1818,7 @@ cp -r skills/* ~/.claude/skills/
 claude
 ```
 
-> **⚠️ For non-Claude executors (GLM, Kimi, etc.):** Let the model read through the project once to ensure skills are correctly parsed. This is especially important if you've rewritten skills to use a different reviewer MCP (e.g., `mcp__llm-chat__chat` instead of `mcp__codex__codex`) — the new executor needs to understand the changed tool call patterns:
+> **⚠️ For non-Claude executors (GLM, Kimi, etc.):** Let the model read through the project once to ensure skills are correctly parsed. This is especially important if you've [rewritten skills](#-alternative-model-combinations) to use a different reviewer MCP (e.g., `mcp__llm-chat__chat` instead of `mcp__codex__codex`) — the new executor needs to understand the changed tool call patterns:
 >
 > ```
 > Read through this project and verify all skills are working:
